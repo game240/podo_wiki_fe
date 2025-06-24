@@ -6,4 +6,24 @@
   padding: 8px;
   border-radius: 4px;
   outline: none;
+  text-align: left;
+}
+
+/* 편집기 컨테이너 기준으로 카운터 리셋 */
+.editor-content {
+  counter-reset: footnotes;
+}
+
+/* 각주 노드마다 카운터 증가 */
+.footnote {
+  counter-increment: footnotes;
+  position: relative;
+}
+
+/* before 가상요소로 번호 표시 */
+.footnote::before {
+  content: "[" attr(data-footnote) "]";
+  position: absolute;
+  left: 0;
+  top: 0;
 }
