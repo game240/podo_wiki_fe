@@ -3,6 +3,42 @@ import type { Editor } from "@tiptap/react";
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
 
+  const insertLinkPlaceholder = () => {
+    // 1) 초록색 스타일로 []() 삽입 → 2) 텍스트 스타일 언마크 → 3) 커서 괄호 안으로 이동
+    editor
+      .chain()
+      .focus()
+      // 1. 초록 텍스트 스타일 적용
+      .setColor("green")
+      // 2. 원시 텍스트 노드로 []() 삽입 (파싱 방지)
+      .insertContent([{ type: "text", text: "[]()" }])
+      .setTextSelection(editor.state.selection.from + 4)
+      .unsetColor()
+      .run();
+  };
+
+  const insertFootnote = () => {
+    editor
+      .chain()
+      .focus()
+      .setColor("blue")
+      .insertContent([{ type: "text", text: "[]" }])
+      .setTextSelection(editor.state.selection.from + 2)
+      .unsetColor()
+      .run();
+  };
+
+  const insertInternalLink = () => {
+    editor
+      .chain()
+      .focus()
+      .setColor("blue")
+      .insertContent([{ type: "text", text: "[]" }])
+      .setTextSelection(editor.state.selection.from + 2)
+      .unsetColor()
+      .run();
+  };
+
   return (
     <div style={{ marginBottom: 8 }}>
       <button
@@ -33,6 +69,15 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         }}
       >
         Strike
+      </button>
+      <button onClick={insertLinkPlaceholder} style={{ marginLeft: 8 }}>
+        Link
+      </button>
+      <button onClick={insertFootnote} style={{ marginLeft: 8 }}>
+        각주
+      </button>
+      <button onClick={insertInternalLink} style={{ marginLeft: 8 }}>
+        Internal Link
       </button>
     </div>
   );
