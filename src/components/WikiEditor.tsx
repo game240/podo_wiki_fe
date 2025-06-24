@@ -9,6 +9,7 @@ import Color from "@tiptap/extension-color";
 import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
 import { useState } from "react";
+import { BracketExit } from "../extensions/BracketExit";
 
 interface FootnoteItem {
   id: string;
@@ -33,6 +34,7 @@ export default function WikiEditor() {
       Image, // /image 업로드·삽입 기능
       InternalLinkPlaceholder,
       FootnotePlaceholder,
+      BracketExit,
     ],
     content: "", // 초기 컨텐츠
     onUpdate({ editor }) {
