@@ -87,6 +87,7 @@ export const FootnotePlaceholder = Node.create({
         class: "footnote",
         style: "color: blue;",
       }),
+      // `[${HTMLAttributes.index}]`,
       `\u00A0\u00A0\u00A0\u00A0`,
     ];
   },
