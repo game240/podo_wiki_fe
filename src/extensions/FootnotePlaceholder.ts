@@ -85,7 +85,7 @@ export const FootnotePlaceholder = Node.create({
       mergeAttributes(HTMLAttributes, {
         "data-footnote": HTMLAttributes.index,
         class: "footnote",
-        style: "color: blue;",
+        style: "color: #0275D8;",
       }),
       // `[${HTMLAttributes.index}]`,
       `\u00A0\u00A0\u00A0\u00A0`,
