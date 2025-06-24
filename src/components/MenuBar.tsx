@@ -18,14 +18,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   };
 
   const insertFootnote = () => {
-    editor
-      .chain()
-      .focus()
-      .setColor("blue")
-      .insertContent([{ type: "text", text: "[]" }])
-      .setTextSelection(editor.state.selection.from + 2)
-      .unsetColor()
-      .run();
+    editor.chain().focus().insertContent({ type: "footnotePlaceholder" }).run();
   };
 
   const insertInternalLink = () => {
