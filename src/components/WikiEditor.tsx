@@ -10,6 +10,8 @@ import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
 import { useState } from "react";
 import { BracketExit } from "../extensions/BracketExit";
+import axios, { AxiosError } from "axios";
+import axiosClient from "../apis/axiosClient";
 
 interface FootnoteItem {
   id: string;
@@ -54,6 +56,37 @@ export default function WikiEditor() {
     },
   });
 
+  // API 호출
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    if (!editor) return;
+    setSaving(true);
+    setMessage(null);
+
+    const content = editor.getHTML();
+
+    try {
+      const { data } = await axiosClient.post("/save", {
+        filename: "page1.html",
+        content,
+      });
+      // 요청이 성공하면 응답 데이터가 res.data에 담겨 옵니다.
+      setMessage(`✅ 저장 성공: ${data.path}`);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const errMsg =
+          error.response?.data?.message ||
+          error.message ||
+          "알 수 없는 오류가 발생했습니다.";
+        setMessage(`❌ 저장 실패: ${errMsg}`);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <MenuBar editor={editor} />
@@ -76,6 +109,33 @@ export default function WikiEditor() {
           ))}
         </ol>
       </div>
+      <div style={{ marginTop: "1rem" }}>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          style={{
+            padding: "0.5rem 1rem",
+            backgroundColor: saving ? "#ccc" : "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: saving ? "not-allowed" : "pointer",
+          }}
+        >
+          {saving ? "저장 중..." : "페이지 저장"}
+        </button>
+      </div>
+
+      {message && (
+        <p
+          style={{
+            marginTop: "0.5rem",
+            color: message.startsWith("✅") ? "green" : "red",
+          }}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }
