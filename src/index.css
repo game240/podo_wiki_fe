@@ -27,3 +27,23 @@
   left: 0;
   top: 0;
 }
+
+/* 전역 CSS 예시 ─ src/index.css 끝부분에 추가 */
+.editor-wrapper {
+  position: relative;
+  padding-left: 3em;
+}
+.editor-wrapper .ProseMirror > * {
+  position: relative;
+  padding-left: 0.5em;
+}
+.editor-wrapper .ProseMirror > *::before {
+  content: attr(data-line);
+  position: absolute;
+  left: -75px;
+  width: 3em;
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
+  color: #999;
+}

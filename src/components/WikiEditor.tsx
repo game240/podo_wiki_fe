@@ -10,8 +10,9 @@ import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
 import { useState } from "react";
 import { BracketExit } from "../extensions/BracketExit";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
+import { LineNumbers } from "../extensions/LineNumbers";
 
 interface FootnoteItem {
   id: string;
@@ -37,6 +38,7 @@ export default function WikiEditor() {
       InternalLinkPlaceholder,
       FootnotePlaceholder,
       BracketExit,
+      LineNumbers,
     ],
     content: "", // 초기 컨텐츠
     onUpdate({ editor }) {
@@ -51,8 +53,8 @@ export default function WikiEditor() {
       setFootnotes(items);
 
       // Debug
-      const markdown = editor.storage.markdown.getMarkdown();
-      console.log(markdown);
+      // const markdown = editor.storage.markdown.getMarkdown();
+      // console.log(markdown);
     },
   });
 
@@ -90,7 +92,9 @@ export default function WikiEditor() {
   return (
     <div>
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <div className="editor-wrapper pl-4">
+        <EditorContent editor={editor} />
+      </div>
 
       <div className="footnotes-list">
         <hr />
