@@ -65,17 +65,20 @@ export default function WikiEditor() {
   const handleSave = async () => {
     if (!editor) return;
     setSaving(true);
-    setMessage(null);
-
-    const content = editor.getHTML();
-
     try {
-      const { data } = await axiosClient.post("/save", {
-        filename: "page1.html",
-        content,
+      // HTML 대신 JSON 문서 구조를 꺼냅니다.
+      const doc = editor.getJSON();
+
+      const res = await axiosClient.post("/save", {
+        filename: "page1.json",
+        content: doc, // content 필드에 JS 객체(JSON)
+        meta: {
+          title: "My Wiki Page",
+          updatedAt: new Date().toISOString(),
+          author: "junhyeok",
+        },
       });
-      // 요청이 성공하면 응답 데이터가 res.data에 담겨 옵니다.
-      setMessage(`✅ 저장 성공: ${data.path}`);
+      setMessage(`✅ 저장 성공: ${res.data.path}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         const errMsg =
@@ -83,12 +86,13 @@ export default function WikiEditor() {
           error.message ||
           "알 수 없는 오류가 발생했습니다.";
         setMessage(`❌ 저장 실패: ${errMsg}`);
+      } else {
+        setMessage(`❌ 저장 실패: ${error}`);
       }
     } finally {
       setSaving(false);
     }
   };
-
   return (
     <div>
       <MenuBar editor={editor} />
