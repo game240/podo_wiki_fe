@@ -1,0 +1,2 @@
+export const ALLOWED_EXTERNAL_COLOR = "#009900";
+export const ALLOWED_INTERNAL_COLOR = "#0275D8";
