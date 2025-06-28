@@ -1,6 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "tiptap-markdown";
 import Image from "@tiptap/extension-image";
 import MenuBar from "./MenuBar";
 import LinkExtension from "@tiptap/extension-link";
@@ -40,10 +39,10 @@ export default function WikiEditor() {
       LinkExtension.configure({
         HTMLAttributes: { class: "wiki-link" },
       }),
-      Markdown.configure({
-        // 내부 AST ↔ Markdown 직렬화
-        html: false, // 화면엔 HTML(렌더링)만, markdown 문법 노출X
-      }),
+      // Markdown.configure({
+      //   // 내부 AST ↔ Markdown 직렬화
+      //   html: false, // 화면엔 HTML(렌더링)만, markdown 문법 노출X
+      // }),
       InternalLinkPlaceholder,
       FootnotePlaceholder,
       BracketExit,
