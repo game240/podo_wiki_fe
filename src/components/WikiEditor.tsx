@@ -13,6 +13,10 @@ import { BracketExit } from "../extensions/BracketExit";
 import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
 import { LineNumbers } from "../extensions/LineNumbers";
+import { CompositionGuard } from "../extensions/CompositionGuard";
+import ClearStoredMarks from "../extensions/ClearStoredMark";
+import { BlueBracket, Bracket } from "../extensions/Bracket";
+import { Paren } from "../extensions/Paren";
 
 interface FootnoteItem {
   id: string;
@@ -24,9 +28,14 @@ export default function WikiEditor() {
 
   const editor = useEditor({
     extensions: [
+      CompositionGuard,
       StarterKit, // # / * / 1. 등 기본 input rule
       TextStyle,
       Color.configure({ types: ["textStyle"] }),
+      Bracket,
+      BlueBracket,
+      Paren,
+      ClearStoredMarks,
       LinkExtension.configure({
         HTMLAttributes: { class: "wiki-link" },
       }),

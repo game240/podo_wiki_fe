@@ -8,12 +8,27 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     editor
       .chain()
       .focus()
-      // 1. 초록 텍스트 스타일 적용
-      .setColor("#009900")
-      // 2. 원시 텍스트 노드로 []() 삽입 (파싱 방지)
-      .insertContent([{ type: "text", text: "[]()" }])
-      .setTextSelection(editor.state.selection.from + 4)
-      .unsetColor()
+
+      .insertContent({ type: "bracket", attrs: { type: "open" } })
+
+      .insertContent([{ type: "text", text: "텍스트" }])
+
+      .insertContent({ type: "bracket", attrs: { type: "close" } })
+
+      .insertContent({ type: "paren", attrs: { type: "open" } })
+
+      .insertContent([{ type: "text", text: "외부 링크" }])
+
+      .insertContent({ type: "paren", attrs: { type: "close" } })
+      .run();
+
+    editor.view.dispatch(editor.state.tr.setStoredMarks([]));
+
+    const { to } = editor.state.selection; // to는 방금 삽입된 끝 위치
+    editor
+      .chain()
+      .focus()
+      .setTextSelection(to) // ')' 바로 앞 자리에 커서 고정
       .run();
   };
 
@@ -25,10 +40,11 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     editor
       .chain()
       .focus()
-      .setColor("#0275D8")
-      .insertContent([{ type: "text", text: "[]" }])
-      .setTextSelection(editor.state.selection.from + 2)
-      .unsetColor()
+      .insertContent({ type: "blueBracket", attrs: { type: "open" } })
+
+      .insertContent([{ type: "text", text: "내부 링크" }])
+
+      .insertContent({ type: "blueBracket", attrs: { type: "close" } })
       .run();
   };
 
