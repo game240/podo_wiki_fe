@@ -32,6 +32,7 @@ export default function WikiEditor() {
       StarterKit, // # / * / 1. 등 기본 input rule
       TextStyle,
       Color.configure({ types: ["textStyle"] }),
+      Image.configure({ inline: true }),
       Bracket,
       BlueBracket,
       Paren,
@@ -43,7 +44,6 @@ export default function WikiEditor() {
         // 내부 AST ↔ Markdown 직렬화
         html: false, // 화면엔 HTML(렌더링)만, markdown 문법 노출X
       }),
-      Image, // /image 업로드·삽입 기능
       InternalLinkPlaceholder,
       FootnotePlaceholder,
       BracketExit,
