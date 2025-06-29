@@ -1,5 +1,6 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { ALLOWED_EXTERNAL_COLOR } from "../../constants/allowLinkColor";
+import externalLinkIcon from "../../assets/ic_external_link.svg";
 
 export const ExternalLinkPlaceholder = Node.create({
   name: "externalLinkPlaceholder",
@@ -21,6 +22,17 @@ export const ExternalLinkPlaceholder = Node.create({
         rel: "noopener noreferrer",
         style: `color: ${ALLOWED_EXTERNAL_COLOR};`,
       }),
+      [
+        "img",
+        {
+          src: externalLinkIcon,
+          alt: "external-link-icon",
+          width: "16",
+          height: "16",
+          style: "margin-right:4px; vertical-align:middle;",
+        },
+      ],
+
       node.attrs.text,
     ];
   },
