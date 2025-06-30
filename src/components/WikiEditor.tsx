@@ -13,7 +13,7 @@ import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
 import { LineNumbers } from "../extensions/LineNumbers";
 import { CompositionGuard } from "../extensions/CompositionGuard";
-import ClearStoredMarks from "../extensions/ClearStoredMark";
+import { ClearStoredMarks } from "../extensions/ClearStoredMark";
 import { BlueBracket, Bracket } from "../extensions/Bracket";
 import { Paren } from "../extensions/Paren";
 
