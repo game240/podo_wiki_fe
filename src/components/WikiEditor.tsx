@@ -8,14 +8,14 @@ import Color from "@tiptap/extension-color";
 import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
 import { useState } from "react";
-import { BracketExit } from "../extensions/BracketExit";
+import { BracketExit } from "../extensions/brackets/BracketExit";
 import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
 import { LineNumbers } from "../extensions/LineNumbers";
 import { CompositionGuard } from "../extensions/CompositionGuard";
 import { ClearStoredMarks } from "../extensions/ClearStoredMark";
-import { BlueBracket, Bracket } from "../extensions/Bracket";
-import { Paren } from "../extensions/Paren";
+import { BlueBracket, Bracket } from "../extensions/brackets/Bracket";
+import { Paren } from "../extensions/brackets/Paren";
 
 interface FootnoteItem {
   id: string;
