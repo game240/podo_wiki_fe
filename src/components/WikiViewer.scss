@@ -1,0 +1,38 @@
+/* src/components/WikiViewer.scss */
+.wiki-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  border: none;
+  .ProseMirror {
+    border: none;
+    min-height: 0;
+    padding: 0;
+  }
+  &__section {
+  }
+
+  &__section-title {
+    color: var(--BLACK, #212529);
+    font-family: Pretendard;
+    font-size: 27px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: -0.54px;
+  }
+
+  &__section-body {
+    margin-left: 1rem;
+  }
+  &__segment {
+    color: var(--BLACK, #212529);
+    font-family: Pretendard;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.3px;
+  }
+}
