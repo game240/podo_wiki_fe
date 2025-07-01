@@ -16,6 +16,7 @@ import { CompositionGuard } from "../extensions/CompositionGuard";
 import { ClearStoredMarks } from "../extensions/ClearStoredMark";
 import { BlueBracket, Bracket } from "../extensions/brackets/Bracket";
 import { Paren } from "../extensions/brackets/Paren";
+import { Equals } from "../extensions/brackets/Equals";
 
 interface FootnoteItem {
   id: string;
@@ -35,6 +36,7 @@ export default function WikiEditor() {
       Bracket,
       BlueBracket,
       Paren,
+      Equals,
       ClearStoredMarks,
       LinkExtension.configure({
         HTMLAttributes: { class: "wiki-link" },

@@ -55,6 +55,17 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       .run();
   };
 
+  // 문단 제목
+  const insertParagraph = () => {
+    editor
+      .chain()
+      .focus()
+      .insertContent({ type: "equals", attrs: { type: "open" } })
+      .insertContent([{ type: "text", text: "문단 제목" }])
+      .insertContent({ type: "equals", attrs: { type: "close" } })
+      .run();
+  };
+
   return (
     <div style={{ marginBottom: 8 }}>
       <button
@@ -94,6 +105,9 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       </button>
       <button onClick={insertInternalLink} style={{ marginLeft: 8 }}>
         Internal Link
+      </button>
+      <button onClick={insertParagraph} style={{ marginLeft: 8 }}>
+        Paragraph
       </button>
     </div>
   );
