@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import externalLinkIcon from "../assets/ic_external_link.svg";
+import { BoldIcon, ItalicIcon, StrikeIcon } from "../assets/editor/EditorIcons";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -67,47 +68,39 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   };
 
   return (
-    <div style={{ marginBottom: 8 }}>
+    <div className="flex items-center justify-end gap-2 mb-2">
       <button
+        className="cursor-pointer"
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={!editor.can().chain().toggleBold().run()}
-        style={{
-          fontWeight: editor.isActive("bold") ? "bold" : "normal",
-          marginRight: 4,
-        }}
       >
-        Bold
+        <BoldIcon color={editor.isActive("bold") ? "black" : ""} />
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        disabled={!editor.can().chain().toggleItalic().run()}
-        style={{
-          fontStyle: editor.isActive("italic") ? "italic" : "normal",
-          marginRight: 4,
-        }}
-      >
-        Italic
-      </button>
-      <button
+        className="cursor-pointer"
         onClick={() => editor.chain().focus().toggleStrike().run()}
         disabled={!editor.can().chain().toggleStrike().run()}
-        style={{
-          textDecoration: editor.isActive("strike") ? "line-through" : "none",
-        }}
       >
-        Strike
+        <StrikeIcon color={editor.isActive("strike") ? "black" : ""} />
       </button>
-      <button onClick={insertExternalLink} style={{ marginLeft: 8 }}>
-        Link
+      <button
+        className="cursor-pointer"
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        disabled={!editor.can().chain().toggleItalic().run()}
+      >
+        <ItalicIcon color={editor.isActive("italic") ? "black" : ""} />
       </button>
-      <button onClick={insertFootnote} style={{ marginLeft: 8 }}>
+      <button className="cursor-pointer" onClick={insertFootnote}>
         각주
       </button>
-      <button onClick={insertInternalLink} style={{ marginLeft: 8 }}>
-        Internal Link
+      <button className="cursor-pointer" onClick={insertExternalLink}>
+        외부 링크
       </button>
-      <button onClick={insertParagraph} style={{ marginLeft: 8 }}>
-        Paragraph
+      <button className="cursor-pointer" onClick={insertInternalLink}>
+        위키 링크
+      </button>
+      <button className="cursor-pointer" onClick={insertParagraph}>
+        문단 추가
       </button>
     </div>
   );
