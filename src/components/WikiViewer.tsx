@@ -2,6 +2,8 @@ import React, { useEffect, useState, type JSX } from "react";
 import axiosClient from "../apis/axiosClient";
 import type { JSONContent } from "@tiptap/react";
 import externalLinkIcon from "../assets/ic_external_link.svg";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 import { transformPlaceholders } from "../utils/transformPlaceholders";
 import { transformToggles } from "../utils/transformToggles";
@@ -72,24 +74,9 @@ function renderNode(node: JSONContent, key: number): React.ReactNode {
 
     case "image": {
       const src = (node.attrs?.src as string) ?? "";
-      const alt = (node.attrs?.alt as string) ?? "";
-      const title = (node.attrs?.title as string) ?? "";
-      return (
-        <figure key={key} style={{ margin: 0 }}>
-          <img
-            src={src}
-            alt={alt}
-            style={{ maxWidth: "100%", display: "block" }}
-          />
-          {title && (
-            <figcaption
-              style={{ textAlign: "center", fontSize: "0.9em", color: "#666" }}
-            >
-              {title}
-            </figcaption>
-          )}
-        </figure>
-      );
+      const alt = (node.attrs?.alt as string) ?? undefined;
+      const title = (node.attrs?.title as string) ?? undefined;
+      return <ViewerImage key={key} src={src} alt={alt} title={title} />;
     }
 
     case "externalLinkPlaceholder": {
@@ -149,6 +136,43 @@ function renderNode(node: JSONContent, key: number): React.ReactNode {
     default:
       return <React.Fragment key={key}>{children}</React.Fragment>;
   }
+}
+
+// Component to show skeleton until image loads
+function ViewerImage({
+  src,
+  alt,
+  title,
+}: {
+  src: string;
+  alt?: string;
+  title?: string;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    setLoaded(false);
+    const img = new Image();
+    img.src = src;
+    img.onload = () => setLoaded(true);
+    img.onerror = () => setLoaded(true);
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [src]);
+  return (
+    <figure style={{ margin: 0 }}>
+      {!loaded && <Skeleton width={600} height={400} />}
+      {loaded && <img src={src} alt={alt} className="w-[600px]" />}
+      {title && (
+        <figcaption
+          style={{ textAlign: "center", fontSize: "0.9em", color: "#666" }}
+        >
+          {title}
+        </figcaption>
+      )}
+    </figure>
+  );
 }
 
 export default function WikiViewer() {
