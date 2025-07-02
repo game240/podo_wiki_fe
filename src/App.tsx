@@ -1,17 +1,14 @@
 import "./App.css";
 import WikiEditor from "./components/WikiEditor";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import WikiViewer from "./components/WikiViewer";
 import "./styles/colors.css";
+import DefaultLayout from "./layouts/DefaultLayout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <div>
-        <Outlet />
-      </div>
-    ),
+    element: <DefaultLayout />,
     children: [
       {
         path: "editor",
