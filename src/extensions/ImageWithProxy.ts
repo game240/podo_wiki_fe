@@ -1,7 +1,12 @@
 import Image from "@tiptap/extension-image";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+import ImageSkeleton from "../components/ImageSkeleton";
 
 export const ImageWithProxy = Image.extend({
-  name: "image", // 기본 Image 노드를 덮어씁니다
+  name: "image",
+  addNodeView() {
+    return ReactNodeViewRenderer(ImageSkeleton);
+  },
   renderHTML({ node, HTMLAttributes }) {
     // DB에 저장된 키 꺼내기
     const fileKey = node.attrs.src as string;

@@ -86,6 +86,11 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     const file = e.target.files?.[0];
     if (!file || !editor) return;
 
+    // 1. Insert placeholder image to show skeleton immediately
+    editor.chain().focus().setImage({ src: "" }).run();
+    editor.view.dispatch(editor.state.tr.setStoredMarks([]));
+
+    // 2. Upload file in background
     const formData = new FormData();
     formData.append("file", file);
     const uploadRes = await axiosClient.post("/upload", formData, {
@@ -93,9 +98,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     });
     const filePath: string = uploadRes.data.path;
 
-    // 여기서 src에 filePath만 저장
-    editor.chain().focus().setImage({ src: filePath }).run();
-    editor.view.dispatch(editor.state.tr.setStoredMarks([]));
+    // 3. Update the inserted image's src attribute to actual path
+    editor.chain().focus().updateAttributes("image", { src: filePath }).run();
   };
 
   return (
