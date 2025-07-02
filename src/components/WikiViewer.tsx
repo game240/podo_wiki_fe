@@ -73,7 +73,23 @@ function renderNode(node: JSONContent, key: number): React.ReactNode {
     case "image": {
       const src = (node.attrs?.src as string) ?? "";
       const alt = (node.attrs?.alt as string) ?? "";
-      return <img key={key} src={src} alt={alt} style={{ maxWidth: "100%" }} />;
+      const title = (node.attrs?.title as string) ?? "";
+      return (
+        <figure key={key} style={{ margin: 0 }}>
+          <img
+            src={src}
+            alt={alt}
+            style={{ maxWidth: "100%", display: "block" }}
+          />
+          {title && (
+            <figcaption
+              style={{ textAlign: "center", fontSize: "0.9em", color: "#666" }}
+            >
+              {title}
+            </figcaption>
+          )}
+        </figure>
+      );
     }
 
     case "externalLinkPlaceholder": {
@@ -146,15 +162,35 @@ export default function WikiViewer() {
 
         // 1) placeholder 변환 → 2) ==…== 토글 처리
         const flatContent: JSONContent[] = raw.content.flatMap((block) => {
+          // ① image 노드는 block 그대로 반환
+          if (block.type === "image") {
+            return [block];
+          }
+          // ② 그 외 노드만 placeholder → toggle 처리
           const inlined = transformPlaceholders(block.content || []);
           return transformToggles(inlined);
         });
 
+        // 2) 이미지 노드에 대해 presign URL 요청
+        const contentWithProxy = flatContent.map((node) => {
+          if (node.type === "image" && typeof node.attrs?.src === "string") {
+            return {
+              ...node,
+              attrs: {
+                ...node.attrs,
+                src: `${
+                  import.meta.env.VITE_SERVER_URL
+                }/api/image-proxy?path=${encodeURIComponent(node.attrs.src)}`,
+              },
+            };
+          }
+          return node;
+        });
         // 3) 'details' 기준으로 세그먼트 분할
         const segs: Segment[] = [];
         let buffer: JSONContent[] = [];
 
-        flatContent.forEach((node) => {
+        contentWithProxy.forEach((node) => {
           if (node.type === "details") {
             if (buffer.length) {
               segs.push(buffer);

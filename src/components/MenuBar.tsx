@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import externalLinkIcon from "../assets/ic_external_link.svg";
 import { BoldIcon, ItalicIcon, StrikeIcon } from "../assets/editor/EditorIcons";
+import axiosClient from "../apis/axiosClient";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -67,6 +68,36 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       .run();
   };
 
+  // const insertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     // reader.result 에 base64 문자열이 들어있음
+  //     editor
+  //       .chain()
+  //       .focus()
+  //       .setImage({ src: reader.result as string })
+  //       .run();
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+  const insertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editor) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    const uploadRes = await axiosClient.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    const filePath: string = uploadRes.data.path;
+
+    // 여기서 src에 filePath만 저장
+    editor.chain().focus().setImage({ src: filePath }).run();
+    editor.view.dispatch(editor.state.tr.setStoredMarks([]));
+  };
+
   return (
     <div className="flex items-center justify-end gap-2 mb-2">
       <button
@@ -93,6 +124,24 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <button className="cursor-pointer" onClick={insertFootnote}>
         각주
       </button>
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        id="image-upload-input"
+        onClick={(event) => {
+          // 같은 사진 업로드 가능화
+          (event.currentTarget as HTMLInputElement).value = "";
+        }}
+        onChange={insertImage}
+      />
+
+      <button className="cursor-pointer">
+        <label htmlFor="image-upload-input" className="cursor-pointer">
+          이미지
+        </label>
+      </button>
+
       <button className="cursor-pointer" onClick={insertExternalLink}>
         외부 링크
       </button>

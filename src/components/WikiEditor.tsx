@@ -1,6 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
 import MenuBar from "./MenuBar";
 import LinkExtension from "@tiptap/extension-link";
 import TextStyle from "@tiptap/extension-text-style";
@@ -17,6 +16,7 @@ import { ClearStoredMarks } from "../extensions/ClearStoredMark";
 import { BlueBracket, Bracket } from "../extensions/brackets/Bracket";
 import { Paren } from "../extensions/brackets/Paren";
 import { Equals } from "../extensions/brackets/Equals";
+import { ImageWithProxy } from "../extensions/ImageWithProxy";
 
 interface FootnoteItem {
   id: string;
@@ -32,7 +32,10 @@ export default function WikiEditor() {
       StarterKit, // # / * / 1. 등 기본 input rule
       TextStyle,
       Color.configure({ types: ["textStyle"] }),
-      Image.configure({ inline: true }),
+      ImageWithProxy.configure({
+        inline: false,
+        allowBase64: true,
+      }),
       Bracket,
       BlueBracket,
       Paren,
