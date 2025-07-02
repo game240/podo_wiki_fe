@@ -3,6 +3,7 @@ import WikiEditor from "./components/WikiEditor";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import WikiViewer from "./components/WikiViewer";
 import "./styles/colors.css";
+import "./styles/texts.css";
 import DefaultLayout from "./layouts/DefaultLayout";
 
 const router = createBrowserRouter([

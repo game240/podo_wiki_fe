@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 
-// import NavBar from "../components/navbar/NavBar";
+import NavBar from "../components/NavBar";
 
 const DefaultLayout = () => {
   return (
     <main className="w-screen min-h-screen mx-auto">
-      {/* <NavBar /> */}
+      <NavBar />
       <Outlet />
     </main>
   );
