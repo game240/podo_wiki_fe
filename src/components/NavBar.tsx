@@ -2,8 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../libs/supabaseClient";
 import logo from "./../assets/logo.svg";
+import human from "./../assets/human.svg";
+import { useState } from "react";
 
 const NavBar = () => {
+  const [openDialog, setOpenDialog] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -29,12 +32,36 @@ const NavBar = () => {
         <h1 className="text-white font-25-700">포도위키</h1>
       </div>
       {user ? (
-        <button
-          onClick={handleLogout}
-          className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
-        >
-          로그아웃
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => {
+              setOpenDialog(true);
+            }}
+            className="flex justify-center items-center w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
+          >
+            <img src={human} alt="human" className="size-[16px]" />
+          </button>
+          {openDialog && (
+            <div className="absolute right-0 w-[217px]  py-[8px] rounded-[6px] border-1 border-[#CCC] bg-white">
+              <div className="flex flex-col gap-[6px] px-[20px]">
+                <p className="font-12-400">이메일</p>
+                <p className="font-18-500">{user.email}</p>
+              </div>
+              <hr className="my-[8px] border-[#CCC]" />
+              <div className="flex flex-col gap-[8px] px-[20px]">
+                <button className="font-15-500 text-start cursor-pointer">
+                  이름 변경
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="font-15-500 text-start cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       ) : (
         <button
           onClick={handleLogin}

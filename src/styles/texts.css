@@ -1,9 +1,33 @@
+.font-12-400 {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.24px;
+}
+
 .font-15-400 {
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.3px;
+}
+
+.font-15-500 {
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.3px;
+}
+
+.font-18-500 {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.36px;
 }
 
 .font-25-700 {
