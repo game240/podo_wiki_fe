@@ -11,6 +11,38 @@
     padding: 0;
   }
   &__section {
+    summary {
+      list-style: none; // 리스트 마커 제거
+      position: relative; // ::before 위치 기준
+      padding-left: 35px; // 아이콘 크기만큼 왼쪽 여백
+    }
+
+    /* Webkit (크롬, 사파리) */
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    /* Firefox */
+    summary::marker {
+      display: none;
+    }
+
+    summary::before {
+      content: url("./../assets/ic_arrow_bottom.svg");
+      position: absolute;
+      left: 8px;
+      transform: translateY(-50%);
+      width: 17px;
+      height: 10px;
+    }
+
+    &:not([open]) > summary::before {
+      content: url("./../assets/ic_arrow_bottom.svg");
+      position: absolute;
+      left: 8px;
+      transform: translate(-100%, 150%) rotate(-90deg);
+      width: 17px;
+      height: 10px;
+    }
   }
 
   &__section-title {

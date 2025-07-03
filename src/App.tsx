@@ -1,7 +1,6 @@
 import "./App.css";
 import WikiEditor from "./components/WikiEditor";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import WikiViewer from "./components/WikiViewer";
 import "./styles/colors.css";
 import "./styles/texts.css";
 import SignupForm from "./components/auth/SignupForm";
@@ -11,6 +10,7 @@ import AuthCallback from "./components/auth/AuthCallback";
 
 import DefaultLayout from "./layouts/DefaultLayout";
 import PageLayout from "./layouts/PageLayout";
+import WikiPage from "./pages/WikiPage";
 
 const router = createBrowserRouter([
   {
@@ -33,8 +33,8 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "viewer",
-            element: <WikiViewer />,
+            path: "page",
+            element: <WikiPage />,
           },
           {
             path: "signup",
