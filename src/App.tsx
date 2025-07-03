@@ -10,6 +10,7 @@ import SigninForm from "./components/auth/SignInForm";
 import AuthCallback from "./components/auth/AuthCallback";
 
 import DefaultLayout from "./layouts/DefaultLayout";
+import PageLayout from "./layouts/PageLayout";
 
 const router = createBrowserRouter([
   {
@@ -17,28 +18,37 @@ const router = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       {
-        path: "editor",
-        element: (
-          <ProtectedRoute>
-            <WikiEditor />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "viewer",
-        element: <WikiViewer />,
-      },
-      {
-        path: "signup",
-        element: <SignupForm />,
-      },
-      {
-        path: "signin",
-        element: <SigninForm />,
-      },
-      {
-        path: "auth/callback",
-        element: <AuthCallback />,
+        element: <PageLayout />,
+        children: [
+          {
+            path: "",
+            element: <div></div>,
+          },
+          {
+            path: "editor",
+            element: (
+              <ProtectedRoute>
+                <WikiEditor />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "viewer",
+            element: <WikiViewer />,
+          },
+          {
+            path: "signup",
+            element: <SignupForm />,
+          },
+          {
+            path: "signin",
+            element: <SigninForm />,
+          },
+          {
+            path: "auth/callback",
+            element: <AuthCallback />,
+          },
+        ],
       },
     ],
   },
