@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../libs/supabaseClient";
 import logo from "./../assets/logo.svg";
 
 const NavBar = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
+  const handleLogin = () => {
+    navigate("/signin");
+  };
+
   return (
     <nav
       className="flex justify-between items-center pl-[13.802083333333333333333333333333%] pr-[13.541666666666666666666666666667%] w-full h-[56px]"
@@ -13,9 +28,21 @@ const NavBar = () => {
         <img src={logo} alt="logo" />
         <h1 className="text-white font-25-700">포도위키</h1>
       </div>
-      <button className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400">
-        로그인
-      </button>
+      {user ? (
+        <button
+          onClick={handleLogout}
+          className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
+        >
+          로그아웃
+        </button>
+      ) : (
+        <button
+          onClick={handleLogin}
+          className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
+        >
+          로그인
+        </button>
+      )}
     </nav>
   );
 };

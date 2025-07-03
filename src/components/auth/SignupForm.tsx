@@ -1,0 +1,55 @@
+// src/components/SignupForm.tsx
+import { useState } from "react";
+import { supabase } from "../../libs/supabaseClient";
+
+export default function SignupForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
+    const redirectTo = window.location.origin + "/auth/callback";
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: redirectTo },
+    });
+
+    if (error) {
+      setMessage(`❌ ${error.message}`);
+    } else {
+      setMessage("✅ 인증 메일을 보냈습니다. 이메일을 확인해주세요.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ maxWidth: 320, margin: "auto" }}>
+      <h2>회원가입 (이메일 인증)</h2>
+      <input
+        type="email"
+        placeholder="이메일"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="비밀번호"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit" disabled={loading}>
+        {loading ? "로딩..." : "회원가입"}
+      </button>
+      {message && <p style={{ marginTop: 12 }}>{message}</p>}
+    </form>
+  );
+}
