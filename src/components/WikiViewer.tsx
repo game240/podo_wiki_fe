@@ -202,19 +202,22 @@ export default function WikiViewer() {
         const href = (node.attrs?.href as string) ?? "";
         const text = (node.attrs?.text as string) ?? children;
         return (
-          <span key={key} className="inline-flex items-center">
+          <span
+            key={key}
+            className="inline-flex items-center gap-[3px] translate-y-[2px]"
+          >
             <img
               src={externalLinkIcon}
               alt="external-link"
               width={16}
               height={16}
-              style={{ marginRight: 4, verticalAlign: "middle" }}
+              style={{ verticalAlign: "middle" }}
             />
             <a
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="wiki-external-link text-[var(--green)]"
+              className="font-15-400 text-[var(--green)]"
             >
               {text}
             </a>

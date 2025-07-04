@@ -9,20 +9,20 @@ export const transformPlaceholders = (nodes: JSONContent[]): JSONContent[] => {
 
     // 1) External 링크: image + [텍스트](URL)
     if (
-      node.type === "image" &&
-      nodes[i + 1]?.type === "bracket" &&
-      nodes[i + 1].attrs?.type === "open" &&
-      nodes[i + 2]?.type === "text" &&
-      nodes[i + 3]?.type === "bracket" &&
-      nodes[i + 3].attrs?.type === "close" &&
-      nodes[i + 4]?.type === "paren" &&
-      nodes[i + 4].attrs?.type === "open" &&
-      nodes[i + 5]?.type === "text" &&
-      nodes[i + 6]?.type === "paren" &&
-      nodes[i + 6].attrs?.type === "close"
+      // node.type === "image" &&
+      nodes[i]?.type === "bracket" &&
+      nodes[i].attrs?.type === "open" &&
+      nodes[i + 1]?.type === "text" &&
+      nodes[i + 2]?.type === "bracket" &&
+      nodes[i + 2].attrs?.type === "close" &&
+      nodes[i + 3]?.type === "paren" &&
+      nodes[i + 3].attrs?.type === "open" &&
+      nodes[i + 4]?.type === "text" &&
+      nodes[i + 5]?.type === "paren" &&
+      nodes[i + 5].attrs?.type === "close"
     ) {
-      const text = nodes[i + 2].text;
-      const href = nodes[i + 5].text;
+      const text = nodes[i + 1].text;
+      const href = nodes[i + 4].text;
 
       result.push({
         type: "externalLinkPlaceholder",

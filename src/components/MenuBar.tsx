@@ -1,5 +1,4 @@
 import type { Editor } from "@tiptap/react";
-import externalLinkIcon from "../assets/ic_external_link.svg";
 import { BoldIcon, ItalicIcon, StrikeIcon } from "../assets/editor/EditorIcons";
 import axiosClient from "../apis/axiosClient";
 
@@ -11,12 +10,6 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     editor
       .chain()
       .focus()
-
-      .setImage({
-        src: externalLinkIcon,
-        alt: "external-link",
-        title: "external-link",
-      })
 
       .insertContent({ type: "bracket", attrs: { type: "open" } })
 
