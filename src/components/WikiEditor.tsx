@@ -1,4 +1,4 @@
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 import LinkExtension from "@tiptap/extension-link";
@@ -6,7 +6,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BracketExit } from "../extensions/brackets/BracketExit";
 import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
@@ -25,6 +25,9 @@ interface FootnoteItem {
 
 export default function WikiEditor() {
   const [footnotes, setFootnotes] = useState<FootnoteItem[]>([]);
+  const [initialContent, setInitialContent] = useState<JSONContent | null>(
+    null
+  );
 
   const editor = useEditor({
     extensions: [
@@ -53,7 +56,7 @@ export default function WikiEditor() {
       BracketExit,
       LineNumbers,
     ],
-    content: "", // 초기 컨텐츠
+    content: initialContent || "", // 초기 컨텐츠
     onUpdate({ editor }) {
       const items: FootnoteItem[] = [];
       let i = 1;
@@ -70,6 +73,27 @@ export default function WikiEditor() {
       // console.log(markdown);
     },
   });
+
+  // 페이지 편집
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axiosClient.get(`/page/page1.json`);
+        setInitialContent(data.content);
+        console.log(data.content);
+      } catch (error) {
+        console.error("컨텐츠 로딩 실패:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // editor 인스턴스가 준비되고 initialContent가 바뀌면 content 세팅
+  useEffect(() => {
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent);
+    }
+  }, [editor, initialContent]);
 
   // API 호출
   const [saving, setSaving] = useState(false);

@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import WikiViewer from "../components/WikiViewer";
 
 const WikiPage = () => {
+  const navigate = useNavigate();
   return (
     <main className="size-full">
       <div className="flex justify-between items-center">
         <h1 className="font-36-700">포도위키</h1>
-        <button className="w-[74px] h-[36px] font-15-400 rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer">
+        <button
+          className="w-[74px] h-[36px] font-15-400 rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer"
+          onClick={() => navigate("/editor")}
+        >
           편집
         </button>
       </div>
