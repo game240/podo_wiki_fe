@@ -174,7 +174,6 @@ export default function WikiViewer() {
       case "hardBreak":
         return <br key={key} />;
       case "paragraph":
-        console.log(children);
         if (!node.content || node.content.length === 0) {
           return (
             <p key={key}>
@@ -294,7 +293,8 @@ export default function WikiViewer() {
           >
             <p className="text-[var(--blue)]">[{id}]</p>
             {hoveredFootnoteId === id && content && (
-              <div className="absolute top-0 left-0 translate-y-[-100%] w-max max-w-[50vw] bg-white border-1 border-[#CCC] rounded-[6px] p-[8px]">
+              <div className="absolute top-0 left-0 translate-y-[-100%] w-max max-w-[50vw] bg-white border-1 border-[#CCC] rounded-[6px] p-[8px] cursor-default">
+                <p className="inline-flex text-[var(--blue)]">[{id}]</p>&nbsp;
                 {content}
               </div>
             )}
