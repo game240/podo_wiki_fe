@@ -17,132 +17,6 @@ interface FootnoteItem {
   content: string;
 }
 
-// Recursive renderer for JSONContent nodes
-function renderNode(node: JSONContent, key: number): React.ReactNode {
-  const children = node.content
-    ? node.content.map((child, idx) => renderNode(child, idx))
-    : node.text;
-
-  switch (node.type) {
-    case "paragraph":
-      return <p key={key}>{children}</p>;
-
-    case "heading": {
-      const level = (node.attrs?.level as number) ?? 1;
-      const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-      return <Tag key={key}>{children}</Tag>;
-    }
-
-    case "bulletList":
-      return <ul key={key}>{children}</ul>;
-    case "orderedList":
-      return <ol key={key}>{children}</ol>;
-    case "listItem":
-      return <li key={key}>{children}</li>;
-
-    case "text": {
-      let content: React.ReactNode = node.text;
-      if (node.marks) {
-        node.marks.forEach((mark) => {
-          switch (mark.type) {
-            case "bold":
-              content = <strong key={`${key}-bold`}>{content}</strong>;
-              break;
-            case "italic":
-              content = <em key={`${key}-italic`}>{content}</em>;
-              break;
-            case "strike":
-              content = <s key={`${key}-strike`}>{content}</s>;
-              break;
-            case "link": {
-              const href =
-                typeof mark.attrs?.href === "string" ? mark.attrs.href : "";
-              content = (
-                <a
-                  key={`${key}-link`}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {content}
-                </a>
-              );
-              break;
-            }
-            default:
-              break;
-          }
-        });
-      }
-      return <React.Fragment key={key}>{content}</React.Fragment>;
-    }
-
-    case "image": {
-      const src = (node.attrs?.src as string) ?? "";
-      const alt = (node.attrs?.alt as string) ?? undefined;
-      const title = (node.attrs?.title as string) ?? undefined;
-      return <ViewerImage key={key} src={src} alt={alt} title={title} />;
-    }
-
-    case "externalLinkPlaceholder": {
-      const href = (node.attrs?.href as string) ?? "";
-      const text = (node.attrs?.text as string) ?? children;
-      return (
-        <span key={key} className="inline-flex items-center">
-          <img
-            src={externalLinkIcon}
-            alt="external-link"
-            width={16}
-            height={16}
-            style={{ marginRight: 4, verticalAlign: "middle" }}
-          />
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="wiki-external-link text-[var(--green)]"
-          >
-            {text}
-          </a>
-        </span>
-      );
-    }
-
-    case "internalLinkPlaceholder": {
-      const id = (node.attrs?.id as string) ?? "";
-      const text = (node.attrs?.text as string) ?? children;
-      return (
-        <a
-          key={key}
-          href={`/page/${id}`}
-          className="wiki-internal-link text-[var(--blue)]"
-        >
-          {text}
-        </a>
-      );
-    }
-
-    case "footnotePlaceholder": {
-      const id = (node.attrs?.id as string) ?? undefined;
-      return (
-        <p key={key} className="inline text-[var(--blue)]">
-          [{id}]
-        </p>
-      );
-    }
-
-    // Fallback for bracket/paren nodes
-    case "bracket":
-    case "blueBracket":
-    case "paren":
-    case "equals":
-      return <span key={key}>{children}</span>;
-
-    default:
-      return <React.Fragment key={key}>{children}</React.Fragment>;
-  }
-}
-
 // Component to show skeleton until image loads
 function ViewerImage({
   src,
@@ -183,6 +57,9 @@ function ViewerImage({
 export default function WikiViewer() {
   const [segments, setSegments] = useState<Segment[]>([]);
   const [footnotes, setFootnotes] = useState<FootnoteItem[]>([]);
+  const [hoveredFootnoteId, setHoveredFootnoteId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchWiki = async () => {
@@ -253,6 +130,143 @@ export default function WikiViewer() {
 
     fetchWiki();
   }, []);
+
+  // Recursive renderer for JSONContent nodes
+  const renderNode = (node: JSONContent, key: number): React.ReactNode => {
+    const children = node.content
+      ? node.content.map((child, idx) => renderNode(child, idx))
+      : node.text;
+
+    switch (node.type) {
+      case "paragraph":
+        return <p key={key}>{children}</p>;
+
+      case "heading": {
+        const level = (node.attrs?.level as number) ?? 1;
+        const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+        return <Tag key={key}>{children}</Tag>;
+      }
+
+      case "bulletList":
+        return <ul key={key}>{children}</ul>;
+      case "orderedList":
+        return <ol key={key}>{children}</ol>;
+      case "listItem":
+        return <li key={key}>{children}</li>;
+
+      case "text": {
+        let content: React.ReactNode = node.text;
+        if (node.marks) {
+          node.marks.forEach((mark) => {
+            switch (mark.type) {
+              case "bold":
+                content = <strong key={`${key}-bold`}>{content}</strong>;
+                break;
+              case "italic":
+                content = <em key={`${key}-italic`}>{content}</em>;
+                break;
+              case "strike":
+                content = <s key={`${key}-strike`}>{content}</s>;
+                break;
+              case "link": {
+                const href =
+                  typeof mark.attrs?.href === "string" ? mark.attrs.href : "";
+                content = (
+                  <a
+                    key={`${key}-link`}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {content}
+                  </a>
+                );
+                break;
+              }
+              default:
+                break;
+            }
+          });
+        }
+        return <React.Fragment key={key}>{content}</React.Fragment>;
+      }
+
+      case "image": {
+        const src = (node.attrs?.src as string) ?? "";
+        const alt = (node.attrs?.alt as string) ?? undefined;
+        const title = (node.attrs?.title as string) ?? undefined;
+        return <ViewerImage key={key} src={src} alt={alt} title={title} />;
+      }
+
+      case "externalLinkPlaceholder": {
+        const href = (node.attrs?.href as string) ?? "";
+        const text = (node.attrs?.text as string) ?? children;
+        return (
+          <span key={key} className="inline-flex items-center">
+            <img
+              src={externalLinkIcon}
+              alt="external-link"
+              width={16}
+              height={16}
+              style={{ marginRight: 4, verticalAlign: "middle" }}
+            />
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wiki-external-link text-[var(--green)]"
+            >
+              {text}
+            </a>
+          </span>
+        );
+      }
+
+      case "internalLinkPlaceholder": {
+        const id = (node.attrs?.id as string) ?? "";
+        const text = (node.attrs?.text as string) ?? children;
+        return (
+          <a
+            key={key}
+            href={`/page/${id}`}
+            className="wiki-internal-link text-[var(--blue)]"
+          >
+            {text}
+          </a>
+        );
+      }
+
+      case "footnotePlaceholder": {
+        const id = node.attrs?.id as string;
+        const content = footnotes.find((f) => f.id === id)?.content;
+        return (
+          <span
+            key={key}
+            className="inline-block relative cursor-pointer"
+            onMouseEnter={() => setHoveredFootnoteId(id)}
+            onMouseLeave={() => setHoveredFootnoteId(null)}
+          >
+            <p className="text-[var(--blue)]">[{id}]</p>
+            {hoveredFootnoteId === id && content && (
+              <div className="absolute top-0 left-0 translate-y-[-100%] w-max max-w-[50vw] bg-white border-1 border-[#CCC] rounded-[6px] p-[8px]">
+                {content}
+              </div>
+            )}
+          </span>
+        );
+      }
+
+      // Fallback for bracket/paren nodes
+      case "bracket":
+      case "blueBracket":
+      case "paren":
+      case "equals":
+        return <span key={key}>{children}</span>;
+
+      default:
+        return <React.Fragment key={key}>{children}</React.Fragment>;
+    }
+  };
 
   const getTextContent = (node: JSONContent): string => {
     if ("text" in node) {
@@ -345,11 +359,11 @@ export default function WikiViewer() {
 
       {footnotes.length > 0 && (
         <footer className="footnotes">
-          <hr />
+          <hr className="my-[30px] border-[#8A8A8E]" />
           <ol>
             {footnotes.map((fn) => (
-              <li key={fn.id} id={`fn-${fn.id}`} className="flex items-center">
-                <p className="text-[var(--blue)]">[{fn.id}]</p>&nbsp;
+              <li key={fn.id} id={`fn-${fn.id}`} className="flex gap-1">
+                <p className="text-[var(--blue)]">[{fn.id}]</p>
                 {fn.content}
               </li>
             ))}
