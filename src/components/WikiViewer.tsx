@@ -68,14 +68,43 @@ export default function WikiViewer() {
         const raw = data.content as { type: string; content: JSONContent[] };
 
         // 1) placeholder 변환 → 2) ==…== 토글 처리
+        // 1) placeholder + toggle 처리 후 “토글은 최상위, 그 외는 paragraph 래핑”
+        // useEffect 내 raw = data.content
         const flatContent: JSONContent[] = raw.content.flatMap((block) => {
-          // ① image 노드는 block 그대로 반환
           if (block.type === "image") {
             return [block];
           }
-          // ② 그 외 노드만 placeholder → toggle 처리
+
+          // placeholder → toggle 처리
           const inlined = transformPlaceholders(block.content || []);
-          return transformToggles(inlined);
+          const toggled = transformToggles(inlined);
+
+          const result: JSONContent[] = [];
+          let paraBuffer: JSONContent[] = [];
+
+          toggled.forEach((node) => {
+            if (node.type === "details") {
+              if (paraBuffer.length) {
+                result.push({ type: "paragraph", content: paraBuffer });
+                paraBuffer = [];
+              }
+              result.push(node);
+            } else {
+              paraBuffer.push(node);
+            }
+          });
+
+          // 일반 텍스트 버퍼가 남았으면 paragraph로
+          if (paraBuffer.length) {
+            result.push({ type: "paragraph", content: paraBuffer });
+          }
+
+          // 빈 paragraph 블록(줄바꿈)을 완전히 제거하지 말고 빈 paragraph 한 번 내보내기
+          if (result.length === 0) {
+            result.push({ type: "paragraph", content: [] });
+          }
+
+          return result;
         });
 
         // 2) 이미지 노드에 대해 presign URL 요청
@@ -110,15 +139,19 @@ export default function WikiViewer() {
         });
         if (buffer.length) segs.push(buffer);
 
-        // 각주 수집
         const notes: FootnoteItem[] = [];
-        contentWithProxy.forEach((n) => {
-          if (n.type === "footnotePlaceholder") {
-            notes.push({
-              id: n.attrs?.id || "",
-              content: n.attrs?.content || "",
-            });
-          }
+        flatContent.forEach((node) => {
+          // 재귀로 내부 노드까지 체크
+          const collect = (n: JSONContent) => {
+            if (n.type === "footnotePlaceholder") {
+              notes.push({
+                id: n.attrs?.id ?? "",
+                content: n.attrs?.content ?? "",
+              });
+            }
+            (n.content || []).forEach(collect);
+          };
+          collect(node);
         });
         setFootnotes(notes);
 
@@ -138,7 +171,17 @@ export default function WikiViewer() {
       : node.text;
 
     switch (node.type) {
+      case "hardBreak":
+        return <br key={key} />;
       case "paragraph":
+        console.log(children);
+        if (!node.content || node.content.length === 0) {
+          return (
+            <p key={key}>
+              <br />
+            </p>
+          );
+        }
         return <p key={key}>{children}</p>;
 
       case "heading": {
