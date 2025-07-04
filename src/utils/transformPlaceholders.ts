@@ -40,11 +40,11 @@ export const transformPlaceholders = (nodes: JSONContent[]): JSONContent[] => {
       nodes[i + 2]?.type === "blueBracket" &&
       nodes[i + 2].attrs?.type === "close"
     ) {
-      const page = nodes[i + 1].text;
+      const text = nodes[i + 1].text;
 
       result.push({
         type: "internalLinkPlaceholder",
-        attrs: { page },
+        attrs: { text },
       });
       i += 2;
       continue;
