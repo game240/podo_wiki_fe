@@ -73,7 +73,8 @@ export const FootnotePlaceholder = Node.create({
   atom: true,
   addAttributes() {
     return {
-      index: { default: "1" }, // 기본 인덱스값
+      id: { default: "1" }, // 기본 인덱스값
+      content: { default: "" },
     };
   },
   parseHTML() {
@@ -83,11 +84,11 @@ export const FootnotePlaceholder = Node.create({
     return [
       "span",
       mergeAttributes(HTMLAttributes, {
-        "data-footnote": HTMLAttributes.index,
+        "data-footnote": HTMLAttributes.id,
         class: "footnote",
         style: "color: #0275D8;",
       }),
-      // `[${HTMLAttributes.index}]`,
+      // `[${HTMLAttributes.id}]`,
       `\u00A0\u00A0\u00A0\u00A0`,
     ];
   },

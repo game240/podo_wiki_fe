@@ -12,6 +12,10 @@ import externalLinkIcon from "../assets/ic_external_link.svg";
 import "./WikiViewer.scss";
 
 type Segment = JSONContent[];
+interface FootnoteItem {
+  id: string;
+  content: string;
+}
 
 // Recursive renderer for JSONContent nodes
 function renderNode(node: JSONContent, key: number): React.ReactNode {
@@ -119,10 +123,10 @@ function renderNode(node: JSONContent, key: number): React.ReactNode {
     }
 
     case "footnotePlaceholder": {
-      const index = (node.attrs?.index as number) ?? undefined;
+      const id = (node.attrs?.id as string) ?? undefined;
       return (
         <p key={key} className="inline text-[var(--blue)]">
-          [{index}]
+          [{id}]
         </p>
       );
     }
@@ -178,6 +182,7 @@ function ViewerImage({
 
 export default function WikiViewer() {
   const [segments, setSegments] = useState<Segment[]>([]);
+  const [footnotes, setFootnotes] = useState<FootnoteItem[]>([]);
 
   useEffect(() => {
     const fetchWiki = async () => {
@@ -227,6 +232,18 @@ export default function WikiViewer() {
           }
         });
         if (buffer.length) segs.push(buffer);
+
+        // 각주 수집
+        const notes: FootnoteItem[] = [];
+        contentWithProxy.forEach((n) => {
+          if (n.type === "footnotePlaceholder") {
+            notes.push({
+              id: n.attrs?.id || "",
+              content: n.attrs?.content || "",
+            });
+          }
+        });
+        setFootnotes(notes);
 
         setSegments(segs);
       } catch (err) {
@@ -325,6 +342,20 @@ export default function WikiViewer() {
           return elements;
         })()}
       </div>
+
+      {footnotes.length > 0 && (
+        <footer className="footnotes">
+          <hr />
+          <ol>
+            {footnotes.map((fn) => (
+              <li key={fn.id} id={`fn-${fn.id}`} className="flex items-center">
+                <p className="text-[var(--blue)]">[{fn.id}]</p>&nbsp;
+                {fn.content}
+              </li>
+            ))}
+          </ol>
+        </footer>
+      )}
     </section>
   );
 }

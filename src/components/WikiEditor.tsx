@@ -6,7 +6,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { BracketExit } from "../extensions/brackets/BracketExit";
 import { AxiosError } from "axios";
 import axiosClient from "../apis/axiosClient";
@@ -24,7 +24,6 @@ interface FootnoteItem {
 }
 
 export default function WikiEditor() {
-  const [footnotes, setFootnotes] = useState<FootnoteItem[]>([]);
   const [initialContent, setInitialContent] = useState<JSONContent | null>(
     null
   );
@@ -32,13 +31,10 @@ export default function WikiEditor() {
   const editor = useEditor({
     extensions: [
       CompositionGuard,
-      StarterKit, // # / * / 1. 등 기본 input rule
+      StarterKit,
       TextStyle,
       Color.configure({ types: ["textStyle"] }),
-      ImageWithProxy.configure({
-        inline: false,
-        allowBase64: true,
-      }),
+      ImageWithProxy.configure({ inline: false, allowBase64: true }),
       Bracket,
       BlueBracket,
       Paren,
@@ -56,31 +52,30 @@ export default function WikiEditor() {
       BracketExit,
       LineNumbers,
     ],
-    content: initialContent || "", // 초기 컨텐츠
-    onUpdate({ editor }) {
-      const items: FootnoteItem[] = [];
-      let i = 1;
-      editor.state.doc.descendants((node) => {
-        if (node.type.name === "footnotePlaceholder") {
-          items.push({ id: String(i), content: "" });
-          i++;
-        }
-      });
-      setFootnotes(items);
-
-      // Debug
-      // const markdown = editor.storage.markdown.getMarkdown();
-      // console.log(markdown);
-    },
+    content: initialContent || "",
   });
 
-  // 페이지 편집
+  // 각주 목록을 에디터 문서 상태에서 직접 읽어옵니다
+  const footnotes = useMemo<FootnoteItem[]>(() => {
+    if (!editor) return [];
+    const items: FootnoteItem[] = [];
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === "footnotePlaceholder") {
+        items.push({
+          id: node.attrs.id,
+          content: node.attrs.content,
+        });
+      }
+    });
+    return items;
+  }, [editor?.state.doc]);
+
+  // 페이지 편집 초기 컨텐츠 fetch
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axiosClient.get(`/page/page1.json`);
         setInitialContent(data.content);
-        console.log(data.content);
       } catch (error) {
         console.error("컨텐츠 로딩 실패:", error);
       }
@@ -88,12 +83,34 @@ export default function WikiEditor() {
     fetchData();
   }, []);
 
-  // editor 인스턴스가 준비되고 initialContent가 바뀌면 content 세팅
+  // initialContent가 설정되면 에디터에 로드
   useEffect(() => {
     if (editor && initialContent) {
       editor.commands.setContent(initialContent);
     }
   }, [editor, initialContent]);
+
+  // 주석 업데이트: 노드 attrs에 content 반영
+  const updateFootnoteContent = (id: string, newContent: string) => {
+    if (!editor) return;
+    editor
+      .chain()
+      .command(({ tr, state }) => {
+        state.doc.descendants((node, pos) => {
+          if (
+            node.type.name === "footnotePlaceholder" &&
+            node.attrs.id === id
+          ) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              content: newContent,
+            });
+          }
+        });
+        return true;
+      })
+      .run();
+  };
 
   // API 호출
   const [saving, setSaving] = useState(false);
@@ -103,12 +120,10 @@ export default function WikiEditor() {
     if (!editor) return;
     setSaving(true);
     try {
-      // HTML 대신 JSON 문서 구조를 꺼냅니다.
       const doc = editor.getJSON();
-
       const res = await axiosClient.post("/save", {
         filename: "page1.json",
-        content: doc, // content 필드에 JS 객체(JSON)
+        content: doc,
         meta: {
           title: "My Wiki Page",
           updatedAt: new Date().toISOString(),
@@ -130,6 +145,7 @@ export default function WikiEditor() {
       setSaving(false);
     }
   };
+
   return (
     <div>
       <MenuBar editor={editor} />
@@ -144,12 +160,12 @@ export default function WikiEditor() {
           {footnotes.map((fn) => (
             <li key={fn.id} className="flex items-center gap-2">
               <span className="text-[#0275D8]">[{fn.id}]</span>
-              {fn.content || (
-                <input
-                  className="w-full border border-gray-300 rounded px-2 py-1"
-                  placeholder="여기를 클릭하여 각주 내용을 입력하세요"
-                />
-              )}
+              <input
+                className="w-full border border-gray-300 rounded px-2 py-1"
+                placeholder="여기를 클릭하여 각주 내용을 입력하세요"
+                value={fn.content}
+                onChange={(e) => updateFootnoteContent(fn.id, e.target.value)}
+              />
             </li>
           ))}
         </ol>
