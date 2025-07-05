@@ -28,7 +28,7 @@ export const transformPlaceholders = (nodes: JSONContent[]): JSONContent[] => {
         type: "externalLinkPlaceholder",
         attrs: { text, href },
       });
-      i += 6;
+      i += 5;
       continue;
     }
 

@@ -274,7 +274,7 @@ export default function WikiViewer() {
           <a
             key={key}
             href={`/page/${id}`}
-            className="wiki-internal-link text-[var(--blue)]"
+            className="wiki-internal-link text-[var(--blue)] translate-y-[2px]"
           >
             {text}
           </a>
