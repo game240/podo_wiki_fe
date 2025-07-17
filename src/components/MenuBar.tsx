@@ -3,7 +3,13 @@ import { BoldIcon, ItalicIcon, StrikeIcon } from "../assets/editor/EditorIcons";
 import axiosClient from "../apis/axiosClient";
 import { v4 as uuidv4 } from "uuid";
 
-const MenuBar = ({ editor }: { editor: Editor | null }) => {
+const MenuBar = ({
+  editor,
+  isFootnote,
+}: {
+  editor: Editor | null;
+  isFootnote: boolean;
+}) => {
   if (!editor) return null;
 
   const insertExternalLink = () => {
@@ -130,7 +136,11 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       >
         <ItalicIcon color={editor.isActive("italic") ? "black" : ""} />
       </button>
-      <button className="cursor-pointer" onClick={insertFootnote}>
+      <button
+        className="cursor-pointer disabled:text-[#CCC] disabled:cursor-default"
+        onClick={insertFootnote}
+        disabled={isFootnote}
+      >
         각주
       </button>
       <input
@@ -143,10 +153,17 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           (event.currentTarget as HTMLInputElement).value = "";
         }}
         onChange={insertImage}
+        disabled={isFootnote}
       />
 
-      <button className="cursor-pointer">
-        <label htmlFor="image-upload-input" className="cursor-pointer">
+      <button
+        className="cursor-pointer disabled:text-[#CCC] disabled:cursor-default"
+        disabled={isFootnote}
+      >
+        <label
+          htmlFor="image-upload-input"
+          className={isFootnote ? "cursor-default" : "cursor-pointer"}
+        >
           이미지
         </label>
       </button>
@@ -157,7 +174,11 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <button className="cursor-pointer" onClick={insertInternalLink}>
         위키 링크
       </button>
-      <button className="cursor-pointer" onClick={insertParagraph}>
+      <button
+        className="cursor-pointer disabled:text-[#CCC] disabled:cursor-default"
+        onClick={insertParagraph}
+        disabled={isFootnote}
+      >
         문단 추가
       </button>
     </div>

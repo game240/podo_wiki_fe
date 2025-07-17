@@ -135,7 +135,10 @@ export default function WikiEditor() {
 
   return (
     <div>
-      <MenuBar editor={activeEditor} />
+      <MenuBar
+        editor={activeEditor}
+        isFootnote={activeEditor !== null && activeEditor !== mainEditor}
+      />
       <div className="editor-wrapper pl-4">
         {mainEditor && <EditorContent editor={mainEditor} />}
       </div>
