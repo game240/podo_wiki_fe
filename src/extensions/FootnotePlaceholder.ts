@@ -70,7 +70,9 @@ export const FootnotePlaceholder = Node.create({
   name: "footnotePlaceholder",
   group: "inline",
   inline: true,
-  atom: true,
+  atom: false,
+  content: "inline*",
+  marks: "_",
   addAttributes() {
     return {
       id: { default: "1" }, // 기본 인덱스값

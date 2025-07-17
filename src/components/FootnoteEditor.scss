@@ -1,0 +1,7 @@
+.footnote-editor-wrapper {
+  .ProseMirror {
+    width: 100%;
+    min-height: 1em; // 원하는 높이로 조정
+    cursor: text; // 클릭할 때 텍스트 입력 커서 보이도록
+  }
+}

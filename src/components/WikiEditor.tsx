@@ -1,34 +1,40 @@
-import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
+import {
+  useEditor,
+  EditorContent,
+  type Editor,
+  type JSONContent,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import MenuBar from "./MenuBar";
-import LinkExtension from "@tiptap/extension-link";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
-import { InternalLinkPlaceholder } from "../extensions/InternalLinkPlaceholder";
+import LinkExtension from "@tiptap/extension-link";
 import { FootnotePlaceholder } from "../extensions/FootnotePlaceholder";
-import { useEffect, useState, useMemo } from "react";
 import { BracketExit } from "../extensions/brackets/BracketExit";
-import { AxiosError } from "axios";
-import axiosClient from "../apis/axiosClient";
 import { LineNumbers } from "../extensions/LineNumbers";
 import { CompositionGuard } from "../extensions/CompositionGuard";
 import { ClearStoredMarks } from "../extensions/ClearStoredMark";
-import { BlueBracket, Bracket } from "../extensions/brackets/Bracket";
+import { Bracket, BlueBracket } from "../extensions/brackets/Bracket";
 import { Paren } from "../extensions/brackets/Paren";
 import { Equals } from "../extensions/brackets/Equals";
 import { ImageWithProxy } from "../extensions/ImageWithProxy";
+import MenuBar from "./MenuBar";
+import { useEffect, useState, useMemo } from "react";
+import axiosClient from "../apis/axiosClient";
+import FootnoteEditor from "./FootnoteEditor";
 
 interface FootnoteItem {
   id: string;
-  content: string;
+  content: JSONContent[];
 }
 
 export default function WikiEditor() {
   const [initialContent, setInitialContent] = useState<JSONContent | null>(
     null
   );
+  const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
 
-  const editor = useEditor({
+  // Main editor instance
+  const mainEditor = useEditor({
     extensions: [
       CompositionGuard,
       StarterKit,
@@ -40,87 +46,76 @@ export default function WikiEditor() {
       Paren,
       Equals,
       ClearStoredMarks,
-      LinkExtension.configure({
-        HTMLAttributes: { class: "wiki-link" },
-      }),
-      // Markdown.configure({
-      //   // 내부 AST ↔ Markdown 직렬화
-      //   html: false, // 화면엔 HTML(렌더링)만, markdown 문법 노출X
-      // }),
-      InternalLinkPlaceholder,
+      LinkExtension.configure({ HTMLAttributes: { class: "wiki-link" } }),
+      // InternalLinkPlaceholder,
       FootnotePlaceholder,
       BracketExit,
       LineNumbers,
     ],
     content: initialContent || "",
+    onCreate: ({ editor }) => {
+      editor.on("focus", () => setActiveEditor(editor));
+    },
   });
 
-  // 각주 목록을 에디터 문서 상태에서 직접 읽어옵니다
+  // Extract footnotes from the main document
   const footnotes = useMemo<FootnoteItem[]>(() => {
-    if (!editor) return [];
+    if (!mainEditor) return [];
     const items: FootnoteItem[] = [];
-    editor.state.doc.descendants((node) => {
+    mainEditor.state.doc.descendants((node) => {
       if (node.type.name === "footnotePlaceholder") {
         items.push({
           id: node.attrs.id,
-          content: node.attrs.content,
+          content: node.attrs.content as JSONContent[],
         });
       }
     });
     return items;
-  }, [editor?.state.doc]);
+  }, [mainEditor?.state.doc]);
 
-  // 페이지 편집 초기 컨텐츠 fetch
+  // Load initial page content
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axiosClient.get(`/page/page1.json`);
-        setInitialContent(data.content);
-      } catch (error) {
-        console.error("컨텐츠 로딩 실패:", error);
-      }
-    };
-    fetchData();
+    axiosClient.get(`/page/page1.json`).then(({ data }) => {
+      setInitialContent(data.content);
+    });
   }, []);
 
-  // initialContent가 설정되면 에디터에 로드
+  // Set content when fetched
   useEffect(() => {
-    if (editor && initialContent) {
-      editor.commands.setContent(initialContent);
+    if (mainEditor && initialContent) {
+      mainEditor.commands.setContent(initialContent);
     }
-  }, [editor, initialContent]);
+  }, [mainEditor, initialContent]);
 
-  // 주석 업데이트: 노드 attrs에 content 반영
-  const updateFootnoteContent = (id: string, newContent: string) => {
-    if (!editor) return;
-    editor
-      .chain()
-      .command(({ tr, state }) => {
-        state.doc.descendants((node, pos) => {
-          if (
-            node.type.name === "footnotePlaceholder" &&
-            node.attrs.id === id
-          ) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              content: newContent,
-            });
-          }
+  // Update footnote content in main editor
+  const updateFootnoteContent = (id: string, newContent: JSONContent[]) => {
+    if (!mainEditor) return;
+    const { state, view } = mainEditor;
+    // 1) 새로운 트랜잭션 생성
+    let tr = state.tr;
+    // 2) 문서 전체를 순회하며 해당 각주 노드 위치를 찾아 attrs 업데이트
+    state.doc.descendants((node, pos) => {
+      if (node.type.name === "footnotePlaceholder" && node.attrs.id === id) {
+        tr = tr.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          content: newContent,
         });
-        return true;
-      })
-      .run();
+      }
+    });
+    // 3) 변경이 있었다면 뷰에 디스패치
+    if (tr.docChanged) {
+      view.dispatch(tr);
+    }
   };
 
-  // API 호출
+  // Save handler
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-
   const handleSave = async () => {
-    if (!editor) return;
+    if (!mainEditor) return;
     setSaving(true);
     try {
-      const doc = editor.getJSON();
+      const doc = mainEditor.getJSON();
       const res = await axiosClient.post("/save", {
         filename: "page1.json",
         content: doc,
@@ -132,15 +127,7 @@ export default function WikiEditor() {
       });
       setMessage(`✅ 저장 성공: ${res.data.path}`);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const errMsg =
-          error.response?.data?.message ||
-          error.message ||
-          "알 수 없는 오류가 발생했습니다.";
-        setMessage(`❌ 저장 실패: ${errMsg}`);
-      } else {
-        setMessage(`❌ 저장 실패: ${error}`);
-      }
+      setMessage(`❌ 저장 실패: ${(error as Error).message}`);
     } finally {
       setSaving(false);
     }
@@ -148,23 +135,22 @@ export default function WikiEditor() {
 
   return (
     <div>
-      <MenuBar editor={editor} />
+      <MenuBar editor={activeEditor} />
       <div className="editor-wrapper pl-4">
-        <EditorContent editor={editor} />
+        {mainEditor && <EditorContent editor={mainEditor} />}
       </div>
-
       <div className="footnotes-list">
         <hr />
         <h4>각주</h4>
         <ol className="flex flex-col gap-2">
-          {footnotes.map((fn) => (
+          {footnotes.map((fn, index) => (
             <li key={fn.id} className="flex items-center gap-2">
-              <span className="text-[#0275D8]">[{fn.id}]</span>
-              <input
-                className="w-full border border-gray-300 rounded px-2 py-1"
-                placeholder="여기를 클릭하여 각주 내용을 입력하세요"
-                value={fn.content}
-                onChange={(e) => updateFootnoteContent(fn.id, e.target.value)}
+              <span className="text-[#0275D8]">[{index + 1}]</span>
+              <FootnoteEditor
+                id={fn.id}
+                content={fn.content}
+                updateFootnoteContent={updateFootnoteContent}
+                setActiveEditor={setActiveEditor}
               />
             </li>
           ))}
@@ -174,25 +160,16 @@ export default function WikiEditor() {
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: saving ? "#ccc" : "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: saving ? "not-allowed" : "pointer",
-          }}
+          className={saving ? "btn-disabled" : "btn-primary"}
         >
           {saving ? "저장 중..." : "페이지 저장"}
         </button>
       </div>
-
       {message && (
         <p
-          style={{
-            marginTop: "0.5rem",
-            color: message.startsWith("✅") ? "green" : "red",
-          }}
+          className={
+            message.startsWith("✅") ? "text-green-600" : "text-red-600"
+          }
         >
           {message}
         </p>

@@ -14,7 +14,7 @@ import "./WikiViewer.scss";
 type Segment = JSONContent[];
 interface FootnoteItem {
   id: string;
-  content: string;
+  content: JSONContent[];
 }
 
 // Component to show skeleton until image loads
@@ -146,7 +146,7 @@ export default function WikiViewer() {
             if (n.type === "footnotePlaceholder") {
               notes.push({
                 id: n.attrs?.id ?? "",
-                content: n.attrs?.content ?? "",
+                content: (n.attrs?.content as JSONContent[]) ?? [],
               });
             }
             (n.content || []).forEach(collect);
@@ -283,7 +283,11 @@ export default function WikiViewer() {
 
       case "footnotePlaceholder": {
         const id = node.attrs?.id as string;
-        const content = footnotes.find((f) => f.id === id)?.content;
+
+        const noteIndex = footnotes.findIndex((f) => f.id === id);
+        const num = noteIndex >= 0 ? noteIndex + 1 : id;
+
+        const content = noteIndex >= 0 ? footnotes[noteIndex].content : [];
         return (
           <span
             key={key}
@@ -291,11 +295,11 @@ export default function WikiViewer() {
             onMouseEnter={() => setHoveredFootnoteId(id)}
             onMouseLeave={() => setHoveredFootnoteId(null)}
           >
-            <p className="text-[var(--blue)]">[{id}]</p>
+            <p className="text-[var(--blue)]">[{num}]</p>
             {hoveredFootnoteId === id && content && (
               <div className="absolute top-0 left-0 translate-y-[-100%] w-max max-w-[50vw] bg-white border-1 border-[#CCC] rounded-[6px] p-[8px] cursor-default">
-                <p className="inline-flex text-[var(--blue)]">[{id}]</p>&nbsp;
-                {content}
+                <p className="inline-flex text-[var(--blue)]">[{num}]</p>&nbsp;
+                {content.map((node, idx) => renderNode(node, idx))}
               </div>
             )}
           </span>
@@ -407,10 +411,10 @@ export default function WikiViewer() {
         <footer className="footnotes">
           <hr className="my-[30px] border-[#8A8A8E]" />
           <ol>
-            {footnotes.map((fn) => (
+            {footnotes.map((fn, index) => (
               <li key={fn.id} id={`fn-${fn.id}`} className="flex gap-1">
-                <p className="text-[var(--blue)]">[{fn.id}]</p>
-                {fn.content}
+                <p className="text-[var(--blue)]">[{index + 1}]</p>
+                {fn.content.map((node, index) => renderNode(node, index))}
               </li>
             ))}
           </ol>

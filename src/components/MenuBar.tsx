@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { BoldIcon, ItalicIcon, StrikeIcon } from "../assets/editor/EditorIcons";
 import axiosClient from "../apis/axiosClient";
+import { v4 as uuidv4 } from "uuid";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -35,7 +36,18 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   };
 
   const insertFootnote = () => {
-    editor.chain().focus().insertContent({ type: "footnotePlaceholder" }).run();
+    const id = uuidv4();
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "footnotePlaceholder",
+        attrs: {
+          id, // 고유 ID
+          content: [], // 초기 각주 내용은 빈 배열
+        },
+      })
+      .run();
   };
 
   const insertInternalLink = () => {
