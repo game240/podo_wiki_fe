@@ -21,6 +21,8 @@ import MenuBar from "./MenuBar";
 import { useEffect, useState, useMemo } from "react";
 import axiosClient from "../apis/axiosClient";
 import FootnoteEditor from "./FootnoteEditor";
+import { useParams } from "react-router-dom";
+import { AxiosError } from "axios";
 
 interface FootnoteItem {
   id: string;
@@ -28,7 +30,9 @@ interface FootnoteItem {
 }
 
 export default function WikiEditor() {
-  const [initialContent, setInitialContent] = useState<JSONContent | null>(
+  const { title } = useParams();
+
+  const [initialContent, setInitialContent] = useState<JSONContent[] | null>(
     null
   );
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
@@ -73,12 +77,39 @@ export default function WikiEditor() {
     return items;
   }, [mainEditor?.state.doc]);
 
-  // Load initial page content
+  // // Load initial page content
+  // useEffect(() => {
+  //   axiosClient.get(`/page/page1.json`).then(({ data }) => {
+  //     setInitialContent(data.content);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    axiosClient.get(`/page/page1.json`).then(({ data }) => {
-      setInitialContent(data.content);
-    });
-  }, []);
+    if (!title) return;
+
+    const loadPage = async () => {
+      try {
+        const encodedTitle = encodeURIComponent(title);
+
+        const { data } = await axiosClient.get(`/page?title=${encodedTitle}`);
+        setInitialContent(data.content);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 404) {
+            setInitialContent(null);
+          } else {
+            console.error(error);
+            alert("페이지 로드에 실패했습니다.");
+          }
+        } else {
+          console.error(error);
+          alert("페이지 로드에 실패했습니다.");
+        }
+      }
+    };
+
+    loadPage();
+  }, [title]);
 
   // Set content when fetched
   useEffect(() => {
@@ -111,23 +142,41 @@ export default function WikiEditor() {
   // Save handler
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  // const handleSave = async () => {
+  //   if (!mainEditor) return;
+  //   setSaving(true);
+  //   try {
+  //     const doc = mainEditor.getJSON();
+  //     const res = await axiosClient.post("/save", {
+  //       filename: "page1.json",
+  //       content: doc,
+  //       meta: {
+  //         title: "My Wiki Page",
+  //         updatedAt: new Date().toISOString(),
+  //         author: "junhyeok",
+  //       },
+  //     });
+  //     setMessage(`✅ 저장 성공: ${res.data.path}`);
+  //   } catch (error) {
+  //     setMessage(`❌ 저장 실패: ${(error as Error).message}`);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
   const handleSave = async () => {
     if (!mainEditor) return;
     setSaving(true);
     try {
-      const doc = mainEditor.getJSON();
-      const res = await axiosClient.post("/save", {
-        filename: "page1.json",
-        content: doc,
-        meta: {
-          title: "My Wiki Page",
-          updatedAt: new Date().toISOString(),
-          author: "junhyeok",
-        },
+      const content = mainEditor.getJSON();
+      await axiosClient.post("/page", {
+        title,
+        content,
+        // summary: '본문 편집',
       });
-      setMessage(`✅ 저장 성공: ${res.data.path}`);
-    } catch (error) {
-      setMessage(`❌ 저장 실패: ${(error as Error).message}`);
+      setMessage(`✅ 저장 성공: ${title}`);
+    } catch (err) {
+      console.error(err);
+      setMessage(`❌ 저장 실패: ${(err as Error).message}`);
     } finally {
       setSaving(false);
     }
@@ -135,6 +184,7 @@ export default function WikiEditor() {
 
   return (
     <div>
+      <h1 className="font-36-700">{title}</h1>
       <MenuBar
         editor={activeEditor}
         isFootnote={activeEditor !== null && activeEditor !== mainEditor}
