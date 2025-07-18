@@ -15,7 +15,7 @@ export default function SignupForm() {
 
     const redirectTo = window.location.origin + "/auth/callback";
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: redirectTo },
@@ -25,6 +25,13 @@ export default function SignupForm() {
       setMessage(`❌ ${error.message}`);
     } else {
       setMessage("✅ 인증 메일을 보냈습니다. 이메일을 확인해주세요.");
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ id: data.user?.id, nickname: email }]);
+      if (profileError) {
+        console.error("profiles insert error", profileError);
+      }
     }
     setLoading(false);
   };
