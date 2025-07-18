@@ -1,5 +1,4 @@
 import React, { useEffect, useState, type JSX } from "react";
-import axiosClient from "../apis/axiosClient";
 import type { JSONContent } from "@tiptap/react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -54,7 +53,11 @@ function ViewerImage({
   );
 }
 
-export default function WikiViewer() {
+export default function WikiViewer({
+  initialContent,
+}: {
+  initialContent: JSONContent[];
+}) {
   const [segments, setSegments] = useState<Segment[]>([]);
   const [footnotes, setFootnotes] = useState<FootnoteItem[]>([]);
   const [hoveredFootnoteId, setHoveredFootnoteId] = useState<string | null>(
@@ -64,13 +67,12 @@ export default function WikiViewer() {
   useEffect(() => {
     const fetchWiki = async () => {
       try {
-        const { data } = await axiosClient.get("/page/page1.json");
-        const raw = data.content as { type: string; content: JSONContent[] };
+        const raw = initialContent;
 
         // 1) placeholder 변환 → 2) ==…== 토글 처리
         // 1) placeholder + toggle 처리 후 “토글은 최상위, 그 외는 paragraph 래핑”
         // useEffect 내 raw = data.content
-        const flatContent: JSONContent[] = raw.content.flatMap((block) => {
+        const flatContent: JSONContent[] = raw.flatMap((block) => {
           if (block.type === "image") {
             return [block];
           }
@@ -162,7 +164,7 @@ export default function WikiViewer() {
     };
 
     fetchWiki();
-  }, []);
+  }, [initialContent]);
 
   // Recursive renderer for JSONContent nodes
   const renderNode = (node: JSONContent, key: number): React.ReactNode => {

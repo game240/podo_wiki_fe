@@ -25,7 +25,7 @@ const router = createBrowserRouter([
             element: <div></div>,
           },
           {
-            path: "editor",
+            path: "edit/:title",
             element: (
               <ProtectedRoute>
                 <WikiEditor />
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "page",
+            path: "page/:title",
             element: <WikiPage />,
           },
           {

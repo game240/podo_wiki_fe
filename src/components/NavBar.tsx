@@ -45,7 +45,7 @@ const NavBar = () => {
             <div className="absolute right-0 w-[217px]  py-[8px] rounded-[6px] border-1 border-[#CCC] bg-white">
               <div className="flex flex-col gap-[6px] px-[20px]">
                 <p className="font-12-400">이메일</p>
-                <p className="font-18-500">{user.email}</p>
+                <p className="font-18-500">{user.nickname}</p>
               </div>
               <hr className="my-[8px] border-[#CCC]" />
               <div className="flex flex-col gap-[8px] px-[20px]">
