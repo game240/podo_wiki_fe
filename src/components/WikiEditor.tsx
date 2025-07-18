@@ -29,12 +29,23 @@ interface FootnoteItem {
   content: JSONContent[];
 }
 
+interface Meta {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  author_id: string;
+  current_rev: string;
+  current_rev_number: number;
+}
+
 export default function WikiEditor() {
   const { title } = useParams();
 
   const [initialContent, setInitialContent] = useState<JSONContent[] | null>(
     null
   );
+  const [meta, setMeta] = useState<Meta | null>(null);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
 
   // Main editor instance
@@ -92,7 +103,9 @@ export default function WikiEditor() {
         const encodedTitle = encodeURIComponent(title);
 
         const { data } = await axiosClient.get(`/page?title=${encodedTitle}`);
+        setMeta(data.meta);
         setInitialContent(data.content);
+        console.log(data);
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response?.status === 404) {
@@ -184,7 +197,10 @@ export default function WikiEditor() {
 
   return (
     <div>
-      <h1 className="font-36-700">{title}</h1>
+      <div className="flex items-end gap-[12px] mb-[49px]">
+        <h1 className="font-36-700">{title}</h1>
+        <p className="font-28-700">{meta && `(v${meta.current_rev_number})`}</p>
+      </div>
       <MenuBar
         editor={activeEditor}
         isFootnote={activeEditor !== null && activeEditor !== mainEditor}
