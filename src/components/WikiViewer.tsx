@@ -245,6 +245,7 @@ export default function WikiViewer({
       case "externalLinkPlaceholder": {
         const href = (node.attrs?.href as string) ?? "";
         const text = (node.attrs?.text as string) ?? children;
+        const externalHref = href.startsWith("http") ? href : `https://${href}`;
         return (
           <span
             key={key}
@@ -258,7 +259,7 @@ export default function WikiViewer({
               style={{ verticalAlign: "middle" }}
             />
             <a
-              href={href}
+              href={externalHref}
               target="_blank"
               rel="noopener noreferrer"
               className="font-15-400 text-[var(--green)]"
@@ -270,12 +271,11 @@ export default function WikiViewer({
       }
 
       case "internalLinkPlaceholder": {
-        const id = (node.attrs?.id as string) ?? "";
         const text = (node.attrs?.text as string) ?? children;
         return (
           <a
             key={key}
-            href={`/page/${id}`}
+            href={`/page/${text}`}
             className="wiki-internal-link text-[var(--blue)] translate-y-[2px]"
           >
             {text}

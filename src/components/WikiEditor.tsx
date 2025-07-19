@@ -199,7 +199,9 @@ export default function WikiEditor() {
     <div>
       <div className="flex items-end gap-[12px] mb-[49px]">
         <h1 className="font-36-700">{title}</h1>
-        <p className="font-28-700">{meta && `(v${meta.current_rev_number})`}</p>
+        <p className="font-28-700">
+          {meta && `(v${meta.current_rev_number + 1})`}
+        </p>
       </div>
       <MenuBar
         editor={activeEditor}

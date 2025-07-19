@@ -14,6 +14,12 @@ interface WikiDoc {
     updated_at: string;
     author_id: string;
     current_rev: string;
+    categories: [
+      {
+        category_id: string;
+        name: string;
+      }
+    ];
   };
   content: {
     type: "doc";
@@ -88,18 +94,18 @@ const WikiPage = () => {
           <section className="flex flex-col gap-[17px]">
             <div className="flex items-center pl-[8px] w-full h-[23px] rounded-[6px] border-1 border-[#CCC] font-14-400">
               분류:&nbsp;
-              {/* {doc?.meta?.categories?.map((c: string, i: number) => (
+              {doc?.meta?.categories?.map((category, i) => (
                 <span
-                  key={c}
+                  key={category.name}
                   className="text-[var(--blue)] font-14-400"
                   style={{
                     marginRight:
                       i < (doc?.meta?.categories?.length ?? 0) - 1 ? 8 : 0,
                   }}
                 >
-                  {c}
+                  {category.name}
                 </span>
-              ))} */}
+              ))}
             </div>
           </section>
 
