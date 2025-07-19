@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../apis/axiosClient";
 import { timeAgo } from "../utils/timeAgo";
+import { useNavigate } from "react-router-dom";
 
 export interface DiffOperation {
   op: "add" | "remove" | "replace" | "move" | "copy" | "test";
@@ -24,6 +25,8 @@ export interface Revision {
 
 const RecentChange = () => {
   const [recentChange, setRecentChange] = useState<Revision[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecentChange = async () => {
@@ -58,7 +61,14 @@ const RecentChange = () => {
               className="grid grid-cols-[1fr_13rem_13rem] py-[12px] border-b-[1px] border-[#F0F0F0] hover:bg-[#FAFAFA]"
             >
               <div className="flex items-center gap-2">
-                <span className="font-15-400 break-words">{item.title}</span>
+                <span
+                  className="font-15-400 break-words text-[var(--blue)] cursor-pointer hover:text-[#0263b8] hover:underline"
+                  onClick={() => {
+                    navigate(`/page/${item.title}`);
+                  }}
+                >
+                  {item.title}
+                </span>
                 <div className="flex items-center gap-1 text-sm font-500">
                   {item.addedCount > 0 && (
                     <span className="text-green-600">+{item.addedCount}</span>
