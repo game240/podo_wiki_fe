@@ -7,6 +7,7 @@ import search from "./../assets/navbar/ic_search.svg";
 import rightArrow from "./../assets/navbar/ic_right_arrow.svg";
 import { useEffect, useRef, useState } from "react";
 import axiosClient from "../apis/axiosClient";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 const NavBar = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -19,6 +20,10 @@ const NavBar = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 로그인
+  const userRef = useRef(null);
+  const { isOutside } = useOutsideClick({ ref: userRef });
 
   const fetchSuggestions = async (q: string) => {
     if (!q) {
@@ -62,6 +67,12 @@ const NavBar = () => {
   const handleLogin = () => {
     navigate("/signin");
   };
+
+  useEffect(() => {
+    if (isOutside) {
+      setOpenDialog(false);
+    }
+  }, [isOutside]);
 
   return (
     <nav
@@ -126,7 +137,7 @@ const NavBar = () => {
         </div>
 
         {user ? (
-          <div className="relative">
+          <div className="relative" ref={userRef}>
             <button
               onClick={() => {
                 setOpenDialog(true);
