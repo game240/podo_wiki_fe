@@ -43,16 +43,17 @@ const NavBar = () => {
             onChange={(e) => setSearchValue(e.target.value)}
           ></input>
           <div className="flex items-center gap-[8px]">
-            <button className="size-[15px] cursor-pointer">
+            <button
+              className="size-[15px] cursor-pointer"
+              onClick={() => navigate(`/search?query=${searchValue}`)}
+            >
               <img className="size-[15px]" src={search} alt="" />
             </button>
-            <button className="w-[11px] h-[10px] cursor-pointer">
-              <img
-                className="w-[11px] h-[10px]"
-                src={rightArrow}
-                alt=""
-                onClick={() => navigate(`/search?query=${searchValue}`)}
-              />
+            <button
+              className="w-[11px] h-[10px] cursor-pointer"
+              onClick={() => navigate(`/page/${searchValue}`)}
+            >
+              <img className="w-[11px] h-[10px]" src={rightArrow} alt="" />
             </button>
           </div>
         </div>
