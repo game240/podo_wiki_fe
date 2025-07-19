@@ -3,9 +3,12 @@ import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../libs/supabaseClient";
 import logo from "./../assets/logo.svg";
 import human from "./../assets/human.svg";
+import search from "./../assets/navbar/ic_search.svg";
+import rightArrow from "./../assets/navbar/ic_right_arrow.svg";
 import { useState } from "react";
 
 const NavBar = () => {
+  const [searchValue, setSearchValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -31,45 +34,68 @@ const NavBar = () => {
         <img src={logo} alt="logo" />
         <h1 className="text-white font-25-700">포도위키</h1>
       </div>
-      {user ? (
-        <div className="relative">
-          <button
-            onClick={() => {
-              setOpenDialog(true);
-            }}
-            className="flex justify-center items-center w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
-          >
-            <img src={human} alt="human" className="size-[16px]" />
-          </button>
-          {openDialog && (
-            <div className="absolute right-0 w-[217px]  py-[8px] rounded-[6px] border-1 border-[#CCC] bg-white">
-              <div className="flex flex-col gap-[6px] px-[20px]">
-                <p className="font-12-400">이메일</p>
-                <p className="font-18-500">{user.nickname}</p>
-              </div>
-              <hr className="my-[8px] border-[#CCC]" />
-              <div className="flex flex-col gap-[8px] px-[20px]">
-                <button className="font-15-500 text-start cursor-pointer">
-                  이름 변경
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="font-15-500 text-start cursor-pointer"
-                >
-                  로그아웃
-                </button>
-              </div>
-            </div>
-          )}
+
+      <div className="flex items-center gap-[20px]">
+        <div className="flex justify-between px-[12px] py-[11px] w-[217px] h-[40px] rounded-[6px] border-[1px] border-[#ccc] bg-[#fff]">
+          <input
+            className="w-[159px] font-15-400 focus:outline-none"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          ></input>
+          <div className="flex items-center gap-[8px]">
+            <button className="size-[15px] cursor-pointer">
+              <img className="size-[15px]" src={search} alt="" />
+            </button>
+            <button className="w-[11px] h-[10px] cursor-pointer">
+              <img
+                className="w-[11px] h-[10px]"
+                src={rightArrow}
+                alt=""
+                onClick={() => navigate(`/search?query=${searchValue}`)}
+              />
+            </button>
+          </div>
         </div>
-      ) : (
-        <button
-          onClick={handleLogin}
-          className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
-        >
-          로그인
-        </button>
-      )}
+        {user ? (
+          <div className="relative">
+            <button
+              onClick={() => {
+                setOpenDialog(true);
+              }}
+              className="flex justify-center items-center w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
+            >
+              <img src={human} alt="human" className="size-[16px]" />
+            </button>
+            {openDialog && (
+              <div className="absolute right-0 w-[217px]  py-[8px] rounded-[6px] border-1 border-[#CCC] bg-white">
+                <div className="flex flex-col gap-[6px] px-[20px]">
+                  <p className="font-12-400">이메일</p>
+                  <p className="font-18-500">{user.nickname}</p>
+                </div>
+                <hr className="my-[8px] border-[#CCC]" />
+                <div className="flex flex-col gap-[8px] px-[20px]">
+                  <button className="font-15-500 text-start cursor-pointer">
+                    이름 변경
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="font-15-500 text-start cursor-pointer"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={handleLogin}
+            className="w-[98px] h-[40px] rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer font-15-400"
+          >
+            로그인
+          </button>
+        )}
+      </div>
     </nav>
   );
 };

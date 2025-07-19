@@ -11,6 +11,7 @@ import AuthCallback from "./components/auth/AuthCallback";
 import DefaultLayout from "./layouts/DefaultLayout";
 import PageLayout from "./layouts/PageLayout";
 import WikiPage from "./pages/WikiPage";
+import WikiSearch from "./pages/WikiSearch";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
           {
             path: "page/:title",
             element: <WikiPage />,
+          },
+          {
+            path: "search",
+            element: <WikiSearch />,
           },
           {
             path: "signup",
