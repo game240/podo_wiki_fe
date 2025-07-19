@@ -17,6 +17,7 @@ const NavBar = () => {
 
   // 검색
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchSuggestions = async (q: string) => {
@@ -49,6 +50,10 @@ const NavBar = () => {
     };
   }, [searchValue]);
 
+  useEffect(() => {
+    setShowSuggestions(true);
+  }, [suggestions]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
@@ -77,6 +82,8 @@ const NavBar = () => {
             className="w-[159px] font-15-400 focus:outline-none"
             placeholder="여기에서 검색"
             value={searchValue}
+            onBlur={() => setShowSuggestions(false)}
+            onFocus={() => setShowSuggestions(true)}
             onChange={(e) => {
               const q = e.target.value;
               setSearchValue(q);
@@ -99,7 +106,7 @@ const NavBar = () => {
               <img className="w-[11px] h-[10px]" src={rightArrow} alt="" />
             </button>
           </div>
-          {suggestions.length > 0 && (
+          {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute top-full left-0 mt-1 w-[217px] bg-white border border-[#ccc] rounded-[6px] shadow-lg z-10">
               {suggestions.map((title, idx) => (
                 <li
