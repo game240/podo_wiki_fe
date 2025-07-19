@@ -75,6 +75,7 @@ const NavBar = () => {
         <div className="flex justify-between px-[12px] py-[11px] w-[217px] h-[40px] rounded-[6px] border-[1px] border-[#ccc] bg-[#fff]">
           <input
             className="w-[159px] font-15-400 focus:outline-none"
+            placeholder="여기에서 검색"
             value={searchValue}
             onChange={(e) => {
               const q = e.target.value;
