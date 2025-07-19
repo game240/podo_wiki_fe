@@ -51,7 +51,6 @@ const WikiSearch = () => {
           pageSize: String(pageSize),
         });
         const { data } = await axiosClient.get(`/search?${params}`);
-        console.log(data);
         setSearchResult(data.data);
         setPagination(data.pagination);
       } catch (error) {
