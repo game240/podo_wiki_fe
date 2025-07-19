@@ -5,13 +5,49 @@ import logo from "./../assets/logo.svg";
 import human from "./../assets/human.svg";
 import search from "./../assets/navbar/ic_search.svg";
 import rightArrow from "./../assets/navbar/ic_right_arrow.svg";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import axiosClient from "../apis/axiosClient";
 
 const NavBar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // 검색
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchSuggestions = async (q: string) => {
+    if (!q) {
+      return setSuggestions([]);
+    }
+
+    try {
+      const { data } = await axiosClient.get("/search-autocomplete", {
+        params: { q },
+      });
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Autocomplete axios error:", error);
+      setSuggestions([]);
+    }
+  };
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(searchValue.trim());
+    }, 200);
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchValue]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -35,12 +71,18 @@ const NavBar = () => {
         <h1 className="text-white font-25-700">포도위키</h1>
       </div>
 
-      <div className="flex items-center gap-[20px]">
+      <div className="flex items-center gap-[20px] relative">
         <div className="flex justify-between px-[12px] py-[11px] w-[217px] h-[40px] rounded-[6px] border-[1px] border-[#ccc] bg-[#fff]">
           <input
             className="w-[159px] font-15-400 focus:outline-none"
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => {
+              const q = e.target.value;
+              setSearchValue(q);
+              if (!q.trim()) {
+                setSuggestions([]);
+              }
+            }}
           ></input>
           <div className="flex items-center gap-[8px]">
             <button
@@ -56,7 +98,25 @@ const NavBar = () => {
               <img className="w-[11px] h-[10px]" src={rightArrow} alt="" />
             </button>
           </div>
+          {suggestions.length > 0 && (
+            <ul className="absolute top-full left-0 mt-1 w-[217px] bg-white border border-[#ccc] rounded-[6px] shadow-lg z-10">
+              {suggestions.map((title, idx) => (
+                <li
+                  key={idx}
+                  className="px-[12px] py-[8px] cursor-pointer hover:bg-gray-100"
+                  onClick={() => {
+                    navigate(`/page/${title}`);
+                    setSearchValue("");
+                    setSuggestions([]);
+                  }}
+                >
+                  {title}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+
         {user ? (
           <div className="relative">
             <button
