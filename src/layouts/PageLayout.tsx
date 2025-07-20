@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import PageBlock from "../components/PageBlock";
+import RightPageBlockContent from "../components/RightPageBlockContent";
 
 const PageLayout = () => {
   return (
@@ -7,7 +8,9 @@ const PageLayout = () => {
       <PageBlock className="mb-[200px] w-[54.427083333333333333333333333333%] min-h-[984px] p-[24px]">
         <Outlet />
       </PageBlock>
-      <PageBlock className="w-[17.447916666666666666666666666667%] h-[399px] p-[20px]"></PageBlock>
+      <PageBlock className="w-[17.447916666666666666666666666667%] h-[399px] p-[20px]">
+        <RightPageBlockContent />
+      </PageBlock>
     </main>
   );
 };
