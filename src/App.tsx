@@ -12,6 +12,7 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import PageLayout from "./layouts/PageLayout";
 import WikiPage from "./pages/WikiPage";
 import WikiSearch from "./pages/WikiSearch";
+import RecentChange from "./pages/RecentChange";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: "search",
             element: <WikiSearch />,
+          },
+          {
+            path: "recent-change",
+            element: <RecentChange />,
           },
           {
             path: "signup",

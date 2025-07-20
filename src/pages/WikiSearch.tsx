@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../apis/axiosClient";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import rightArrow from "../assets/search/ic_right.svg";
+import rightArrow from "../assets/ic_right.svg";
 import pageIcon from "../assets/search/ic_page.svg";
 
 interface SearchResult {
