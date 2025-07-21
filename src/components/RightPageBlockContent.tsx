@@ -47,12 +47,14 @@ const RightPageBlockContent = () => {
             className="flex justify-between items-center w-full"
           >
             <li
-              className="font-15-400 break-words text-[var(--blue)] cursor-pointer hover:text-[#0263b8] hover:underline"
+              className="font-15-400 break-words text-[var(--blue)] cursor-pointer hover:text-[#0263b8] hover:underline line-clamp-1"
               onClick={() => navigate(`/page/${encodeURI(page.title)}`)}
             >
               {page.title}
             </li>
-            <p className="font-12-400">{timeAgo(page.updated_at)}</p>
+            <p className="font-12-400 whitespace-nowrap">
+              {timeAgo(page.updated_at)}
+            </p>
           </div>
         ))}
       </ul>
