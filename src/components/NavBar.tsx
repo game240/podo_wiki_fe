@@ -94,7 +94,10 @@ const NavBar = () => {
           "linear-gradient(90deg, #6A39C0 0%, #6A39C0 50%, #3C6FE5 100%)",
       }}
     >
-      <div className="flex items-center gap-[10px]">
+      <div
+        className="flex items-center gap-[10px] cursor-pointer"
+        onClick={() => navigate("/")}
+      >
         <img src={logo} alt="logo" />
         <h1 className="text-white font-25-700">포도위키</h1>
       </div>
