@@ -13,6 +13,7 @@ import PageLayout from "./layouts/PageLayout";
 import WikiPage from "./pages/WikiPage";
 import WikiSearch from "./pages/WikiSearch";
 import RecentChange from "./pages/RecentChange";
+import Landing from "./pages/Landing";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "",
-            element: <div></div>,
+            element: <Landing />,
           },
           {
             path: "edit/*",

@@ -62,6 +62,14 @@
   letter-spacing: -0.36px;
 }
 
+.font-21-700 {
+  font-size: 21px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: -0.42px;
+}
+
 .font-24-700 {
   font-size: 24px;
   font-style: normal;
