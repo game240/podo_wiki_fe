@@ -5,6 +5,7 @@ import WikiViewer from "../components/WikiViewer";
 import type { JSONContent } from "@tiptap/react";
 import axiosClient from "../apis/axiosClient";
 import { parseISO, format } from "date-fns";
+import ParentLink from "../components/ParentLink";
 
 interface WikiDoc {
   meta: {
@@ -28,9 +29,9 @@ interface WikiDoc {
 }
 
 const WikiPage = () => {
-  const { pathname } = useLocation(); // e.g. "/page/광운대학교/광운극예술연구회"
-  const raw = pathname.replace(/^\/page\//, ""); // "광운대학교/광운극예술연구회"
-  const title = decodeURI(raw);
+  const { pathname } = useLocation(); // ex: "/page/수도권/동북권/광운대학교"
+  const raw = pathname.replace(/^\/page\//, ""); // "수도권/동북권/광운대학교"
+  const title = decodeURI(raw); // 디코딩
 
   const navigate = useNavigate();
 
@@ -94,7 +95,7 @@ const WikiPage = () => {
               ? format(parseISO(doc?.meta?.updated_at), "yyyy-MM-dd HH:mm:ss")
               : "알 수 없음"}
           </p>
-          <section className="flex flex-col gap-[17px]">
+          <section className="flex flex-col gap-[17px] mb-[14.4px]">
             <div className="flex items-center pl-[8px] w-full h-[23px] rounded-[6px] border-1 border-[#CCC] font-14-400">
               분류:&nbsp;
               {doc?.meta?.categories?.map((category, i) => (
@@ -111,6 +112,8 @@ const WikiPage = () => {
               ))}
             </div>
           </section>
+
+          <ParentLink />
 
           {/* 실제 내용 렌더러에 doc.content 전달 */}
           <WikiViewer initialContent={doc?.content?.content || []} />
