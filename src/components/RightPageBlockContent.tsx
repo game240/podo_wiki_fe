@@ -1,7 +1,7 @@
 import rightArrow from "../assets/ic_right.svg";
 import { useEffect, useState } from "react";
 import axiosClient from "../apis/axiosClient";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { timeAgo } from "../utils/timeAgo";
 
 interface RecentChangedPage {
@@ -15,13 +15,15 @@ const RightPageBlockContent = () => {
     RecentChangedPage[]
   >([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     const fetchRecentChange = async () => {
       const { data } = await axiosClient.get("/recent-change/pages");
       setRecentChangedPages(data.items);
     };
     fetchRecentChange();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <section className="w-full h-full">
