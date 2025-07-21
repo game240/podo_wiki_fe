@@ -14,6 +14,7 @@ import WikiPage from "./pages/WikiPage";
 import WikiSearch from "./pages/WikiSearch";
 import RecentChange from "./pages/RecentChange";
 import Landing from "./pages/Landing";
+import Organizations from "./pages/Organizations";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
           {
             path: "",
             element: <Landing />,
+          },
+          {
+            path: "organizations",
+            element: <Organizations />,
           },
           {
             path: "edit/*",
