@@ -123,7 +123,8 @@ const NavBar = () => {
                 <li
                   key={idx}
                   className="px-[12px] py-[8px] cursor-pointer hover:bg-gray-100"
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault();
                     navigate(`/page/${encodeURI(title)}`);
                     setSearchValue("");
                     setSuggestions([]);
