@@ -1,5 +1,7 @@
 import { format } from "date-fns";
-import contents from "../assets/landing/contents.svg";
+import newIcon from "../assets/landing/ic_new.svg";
+import groupIcon from "../assets/landing/ic_people.svg";
+import questionIcon from "../assets/landing/ic_question.svg";
 
 const Landing = () => {
   return (
@@ -32,7 +34,77 @@ const Landing = () => {
         </p>
       </section>
 
-      <img src={contents} alt="" />
+      <div className="border-2 border-[#6A39C0] overflow-hidden">
+        {/* 1st row */}
+        <div className="flex items-center border-b border-[#6A39C0]">
+          <div className="flex justify-center items-center w-[98px] h-[71px] bg-[#6A39C0]">
+            <img
+              src={newIcon}
+              alt="new icon"
+              className="w-[60px] h-[60px] flex-shrink-0"
+            />
+          </div>
+          <div className="ml-[12px]">
+            <p className="font-21-700">포도위키가 처음이신가요?</p>
+            <p className="mt-1 font-15-400">
+              먼저{" "}
+              <a
+                // href="/rules"
+                className="text-[var(--blue)] hover:underline hover:text-[#0263b8]"
+              >
+                포도위키의 규정
+              </a>
+              과{" "}
+              <a
+                // href="/how-to-use"
+                className="text-[var(--blue)] hover:underline hover:text-[#0263b8]"
+              >
+                포도위키의 사용 방법
+              </a>
+              을 확인해보세요.
+            </p>
+          </div>
+        </div>
+
+        {/* 2nd row */}
+        <div className="flex items-center border-b border-[#6A39C0]">
+          <div className="flex justify-center items-center w-[98px] h-[71px] bg-[#6A39C0]">
+            <img
+              src={groupIcon}
+              alt="group icon"
+              className="w-[60px] h-[60px] flex-shrink-0"
+            />
+          </div>
+          <div className="ml-[12px]">
+            <p className="font-21-700">연극 단체에 대해 알고 싶으신가요?</p>
+            <p className="mt-1 font-15-400">
+              활동 지역으로 구분된{" "}
+              <a
+                href="/organizations"
+                className="text-[var(--blue)] hover:underline hover:text-[#0263b8]"
+              >
+                연극 단체
+              </a>
+              를 확인해보세요.
+            </p>
+          </div>
+        </div>
+
+        {/* 3rd row */}
+        <div className="flex items-center border-b border-[#6A39C0]">
+          <div className="flex justify-center items-center w-[98px] h-[71px] bg-[#6A39C0]">
+            <img
+              src={questionIcon}
+              alt="question icon"
+              className="w-[60px] h-[60px] flex-shrink-0"
+            />
+          </div>
+          <div className="ml-[12px]">
+            <p className="font-21-700">문의사항</p>
+            <p className="mt-1 font-15-400">podostore1111@gmail.com</p>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };
