@@ -29,7 +29,10 @@ const RightPageBlockContent = () => {
     <section className="w-full h-full">
       <div className="flex justify-between items-center mb-[22px] w-full">
         <p className="font-18-600">최근 변경</p>
-        <button className="cursor-pointer">
+        <button
+          className="cursor-pointer"
+          onClick={() => navigate("/recent-change")}
+        >
           <img
             className="w-[10px] h-[17px]"
             src={rightArrow}
