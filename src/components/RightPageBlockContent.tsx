@@ -45,7 +45,7 @@ const RightPageBlockContent = () => {
           >
             <li
               className="font-15-400 break-words text-[var(--blue)] cursor-pointer hover:text-[#0263b8] hover:underline"
-              onClick={() => navigate(`/page/${page.title}`)}
+              onClick={() => navigate(`/page/${encodeURI(page.title)}`)}
             >
               {page.title}
             </li>

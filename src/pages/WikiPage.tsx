@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AxiosError } from "axios";
 import WikiViewer from "../components/WikiViewer";
 import type { JSONContent } from "@tiptap/react";
@@ -28,7 +28,10 @@ interface WikiDoc {
 }
 
 const WikiPage = () => {
-  const { title } = useParams();
+  const { pathname } = useLocation(); // e.g. "/page/광운대학교/광운극예술연구회"
+  const raw = pathname.replace(/^\/page\//, ""); // "광운대학교/광운극예술연구회"
+  const title = decodeURI(raw);
+
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -40,7 +43,7 @@ const WikiPage = () => {
       setLoading(true);
       try {
         // 한글·공백 안전 인코딩
-        const encoded = encodeURIComponent(title || "");
+        const encoded = encodeURI(title || "");
         const { data } = await axiosClient.get(`/page?title=${encoded}`);
         setDoc(data);
         setExists(true);
@@ -76,7 +79,7 @@ const WikiPage = () => {
           <button
             className="w-[74px] h-[36px] font-15-400 rounded-[6px] border-1 border-[#CCC] bg-white cursor-pointer"
             // 편집 버튼도 제목을 넘겨서 이동
-            onClick={() => navigate(`/edit/${encodeURIComponent(title || "")}`)}
+            onClick={() => navigate(`/edit/${encodeURI(title || "")}`)}
           >
             편집
           </button>
@@ -117,7 +120,7 @@ const WikiPage = () => {
           <p>"{title}" 페이지가 존재하지 않습니다.</p>
           <button
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded cursor-pointer"
-            onClick={() => navigate(`/edit/${encodeURIComponent(title || "")}`)}
+            onClick={() => navigate(`/edit/${encodeURI(title || "")}`)}
           >
             새 문서 생성
           </button>

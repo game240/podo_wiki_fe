@@ -124,7 +124,7 @@ const NavBar = () => {
                   key={idx}
                   className="px-[12px] py-[8px] cursor-pointer hover:bg-gray-100"
                   onClick={() => {
-                    navigate(`/page/${title}`);
+                    navigate(`/page/${encodeURI(title)}`);
                     setSearchValue("");
                     setSuggestions([]);
                   }}
