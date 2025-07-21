@@ -3,6 +3,7 @@ import type { SectionItem } from "../constants/organizations";
 import { organizations } from "../constants/organizations";
 import clsx from "clsx";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const Organizations = () => (
   <main>
@@ -31,6 +32,8 @@ interface SectionListProps {
 }
 
 const SectionList: React.FC<SectionListProps> = ({ items, prefix = "" }) => {
+  const navigate = useNavigate();
+
   const isRoot = prefix === "";
 
   // 1) depth 계산: 최상위는 1, 자식은 2, 손자는 3…
@@ -94,7 +97,14 @@ const SectionList: React.FC<SectionListProps> = ({ items, prefix = "" }) => {
             </summary>
             <hr className="border-[#CCC] mt-[5px] mb-[21px]" />
             <div className="wiki-viewer__section-body">
-              {item.content}
+              <p
+                className="font-15-400 text-[var(--blue)] cursor-pointer hover:underline hover:text-[#0263b8]"
+                onClick={() =>
+                  navigate(`/page/${encodeURI(item.content || "")}`)
+                }
+              >
+                {item.content}
+              </p>
               {item.children && (
                 // 하위 섹션은 prefix=num 으로 재귀 호출
                 <SectionList items={item.children} prefix={num} />

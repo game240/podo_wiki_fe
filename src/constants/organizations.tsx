@@ -1,169 +1,167 @@
 export interface SectionItem {
   title: string;
-  content: React.ReactNode;
+  content?: string;
   children?: SectionItem[];
 }
 
 export const organizations: SectionItem[] = [
   {
     title: "연극 단체",
-    content: <p>구조도</p>,
     children: [
       {
         title: "수도권",
-        content: <p>수도권</p>,
         children: [
           {
             title: "가천대학교",
-            content: <p>가천대학교</p>,
+            content: "가천대학교",
             children: [
               {
                 title: "아름",
-                content: <p>아름</p>,
+                content: "가천대학교/아름",
               },
             ],
           },
           {
             title: "가톨릭대학교",
-            content: <p>가톨릭대학교</p>,
+            content: "가톨릭대학교",
             children: [
               {
                 title: "성심극예술연구회",
-                content: <p>성심극예술연구회</p>,
+                content: "가톨릭대학교/성심극예술연구회",
               },
             ],
           },
           {
             title: "경기대학교",
-            content: <p>경기대학교</p>,
+            content: "경기대학교",
             children: [
               {
                 title: "나루극예술연구회",
-                content: <p>나루극예술연구회</p>,
+                content: "경기대학교/나루극예술연구회",
               },
             ],
           },
           {
             title: "경희대학교 (국제)",
-            content: <p>경희대학교 (국제)</p>,
+            content: "경희대학교 (국제)",
             children: [
               {
                 title: "경희극회",
-                content: <p>경희극회</p>,
+                content: "경희대학교 (국제)/경희극회",
               },
             ],
           },
           {
             title: "광운대학교",
-            content: <p>광운대학교</p>,
+            content: "광운대학교",
             children: [
               {
                 title: "광운극예술연구회",
-                content: <p>광운극예술연구회</p>,
+                content: "광운대학교/광운극예술연구회",
               },
             ],
           },
           {
             title: "단국대학교 (죽전)",
-            content: <p>단국대학교 (죽전)</p>,
+            content: "단국대학교 (죽전)",
             children: [
               {
                 title: "극예술연구회",
-                content: <p>극예술연구회</p>,
+                content: "단국대학교 (죽전)/극예술연구회",
               },
             ],
           },
           {
             title: "서울시립대학교",
-            content: <p>서울시립대학교</p>,
+            content: "서울시립대학교",
             children: [
               {
                 title: "극예술연구회",
-                content: <p>극예술연구회</p>,
+                content: "서울시립대학교/극예술연구회",
               },
             ],
           },
           {
             title: "성균관대학교",
-            content: <p>성균관대학교</p>,
+            content: "성균관대학교",
             children: [
               {
                 title: "능라촌",
-                content: <p>능라촌</p>,
+                content: "성균관대학교/능라촌",
               },
             ],
           },
           {
             title: "이화여자대학교",
-            content: <p>이화여자대학교</p>,
+            content: "이화여자대학교",
             children: [
               {
                 title: "총연극회",
-                content: <p>총연극회</p>,
+                content: "이화여자대학교/총연극회",
               },
             ],
           },
           {
             title: "인하대학교",
-            content: <p>인하대학교</p>,
+            content: "인하대학교",
             children: [
               {
                 title: "인하극예술연구회",
-                content: <p>인하극예술연구회</p>,
+                content: "인하대학교/인하극예술연구회",
               },
             ],
           },
           {
             title: "중앙대학교",
-            content: <p>중앙대학교</p>,
+            content: "중앙대학교",
             children: [
               {
                 title: "영죽무대",
-                content: <p>영죽무대</p>,
+                content: "중앙대학교/영죽무대",
               },
             ],
           },
           {
             title: "한성대학교",
-            content: <p>한성대학교</p>,
+            content: "한성대학교",
             children: [
               {
                 title: "낙산극회",
-                content: <p>낙산극회</p>,
+                content: "한성대학교/낙산극회",
               },
             ],
           },
           {
             title: "한양대학교 (에리카)",
-            content: <p>한양대학교 (에리카)</p>,
+            content: "한양대학교 (에리카)",
             children: [
               {
                 title: "무대 밖의 삐에로",
-                content: <p>무대 밖의 삐에로</p>,
+                content: "한양대학교 (에리카)/무대 밖의 삐에로",
               },
               {
                 title: "살판",
-                content: <p>살판</p>,
+                content: "한양대학교 (에리카)/살판",
               },
             ],
           },
           {
             title: "협성대학교",
-            content: <p>협성대학교</p>,
+            content: "협성대학교",
             children: [
               {
                 title: "띠앗",
-                content: <p>띠앗</p>,
+                content: "협성대학교/띠앗",
               },
             ],
           },
           {
             title: "홍익대학교",
-            content: <p>홍익대학교</p>,
+            content: "홍익대학교",
             children: [
               {
                 title: "홍익극예술연구회",
-                content: <p>홍익극예술연구회</p>,
+                content: "홍익대학교/홍익극예술연구회",
               },
             ],
           },
@@ -171,15 +169,14 @@ export const organizations: SectionItem[] = [
       },
       {
         title: "강원권",
-        content: <p>강원권</p>,
         children: [
           {
             title: "연세대학교 (미래)",
-            content: <p>연세대학교 (미래)</p>,
+            content: "연세대학교 (미래)",
             children: [
               {
                 title: "외솔극회",
-                content: <p>외솔극회</p>,
+                content: "연세대학교 (미래)/외솔극회",
               },
             ],
           },
@@ -187,49 +184,48 @@ export const organizations: SectionItem[] = [
       },
       {
         title: "충청권",
-        content: <p>충청권</p>,
         children: [
           {
             title: "건국대학교 (글로컬)",
-            content: <p>건국대학교 (글로컬)</p>,
+            content: "건국대학교 (글로컬)",
             children: [
               {
                 title: "극단 소솜",
-                content: <p>극단 소솜</p>,
+                content: "건국대학교 (글로컬)/극단 소솜",
               },
               {
                 title: "건국극회 한울",
-                content: <p>건국극회 한울</p>,
+                content: "건국대학교 (글로컬)/건국극회 한울",
               },
             ],
           },
           {
             title: "남서울대학교",
-            content: <p>남서울대학교</p>,
+            content: "남서울대학교",
             children: [
               {
                 title: "아름다운 사람들",
-                content: <p>아름다운 사람들</p>,
+                content: "남서울대학교/아름다운 사람들",
               },
             ],
           },
           {
             title: "충북대학교",
-            content: <p>충북대학교</p>,
+            content: "충북대학교",
             children: [
               {
                 title: "시네씨아",
-                content: <p>시네씨아</p>,
+                content: "충북대학교/시네씨아",
               },
             ],
           },
           {
             title: "공주대학교",
-            content: <p>공주대학교</p>,
+            content: "공주대학교",
             children: [
               {
                 title: "동선",
-                content: <p>동선</p>,
+                content: "공주대학교/동선",
               },
             ],
           },
@@ -237,25 +233,24 @@ export const organizations: SectionItem[] = [
       },
       {
         title: "전라권",
-        content: <p>전라권</p>,
         children: [
           {
             title: "광주과학기술원",
-            content: <p>광주과학기술원</p>,
+            content: "광주과학기술원",
             children: [
               {
                 title: "지대로",
-                content: <p>지대로</p>,
+                content: "광주과학기술원/지대로",
               },
             ],
           },
           {
             title: "전남대학교",
-            content: <p>전남대학교</p>,
+            content: "전남대학교",
             children: [
               {
                 title: "전대극회",
-                content: <p>전대극회</p>,
+                content: "전남대학교/전대극회",
               },
             ],
           },
@@ -263,25 +258,24 @@ export const organizations: SectionItem[] = [
       },
       {
         title: "경상권",
-        content: <p>경상권</p>,
         children: [
           {
             title: "경일대학교",
-            content: <p>경일대학교</p>,
+            content: "경일대학교",
             children: [
               {
                 title: "열린무대",
-                content: <p>열린무대</p>,
+                content: "경일대학교/열린무대",
               },
             ],
           },
           {
             title: "동국대학교 (WISE)",
-            content: <p>동국대학교 (WISE)</p>,
+            content: "동국대학교 (WISE)",
             children: [
               {
                 title: "동국연극회",
-                content: <p>동국연극회</p>,
+                content: "동국대학교 (WISE)/동국연극회",
               },
             ],
           },
@@ -289,12 +283,10 @@ export const organizations: SectionItem[] = [
       },
       {
         title: "제주권",
-        content: <p>제주권</p>,
       },
     ],
   },
   {
     title: "뮤지컬 단체",
-    content: <p>뮤지컬 단체</p>,
   },
 ];
